@@ -1,0 +1,137 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Press+Start+2P&display=swap");
+
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap");
+
+/* @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900;400;500;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Press+Start+2P&family=SF+Pro+Text:wght@400;500;600&display=swap"); */
+
+@import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter", "sans-serif";
+  --font-garamond: "EB Garamond", "serif";
+}
+
+@layer base {
+  :root {
+    /* Global Colors */
+    --global-bg-1: #f0f0f0;
+    --global-bg-2: #ffffff;
+    --global-text-1: #424956;
+    --global-text-2: #7f7f7f;
+    --global-text-3: #333333;
+
+    /* Table Colors */
+    --table-bg-1: #99c3ff;
+    --table-bg-2: #9eed77;
+    --table-bg-3: #c0c0c0;
+    --table-bg-4: #e5e7e9;
+    --table-bg-5: #f0f0f0;
+    --table-bg-6: #ffffff;
+    --table-text-1: #333333;
+    --table-text-2: #424956;
+    --table-text-3: #7f7f7f;
+
+    /* EditText Colors */
+    --edittext-text-1: #0f1728;
+
+    /* Border Colors */
+    --border-primary: #eaecf0;
+    --border-secondary: #f0f0f0;
+  }
+  body {
+    @apply font-inter;
+  }
+}
+
+@layer utilities {
+  /* Global */
+  .bg-global-1 {
+    background-color: var(--global-bg-1);
+  }
+  .bg-global-2 {
+    background-color: var(--global-bg-2);
+  }
+  .text-global-1 {
+    color: var(--global-text-1);
+  }
+  .text-global-2 {
+    color: var(--global-text-2);
+  }
+  .text-global-3 {
+    color: var(--global-text-3);
+  }
+
+  /* Table */
+  .bg-table-1 {
+    background-color: var(--table-bg-1);
+  }
+  .bg-table-2 {
+    background-color: var(--table-bg-2);
+  }
+  .bg-table-3 {
+    background-color: var(--table-bg-3);
+  }
+  .bg-table-4 {
+    background-color: var(--table-bg-4);
+  }
+  .bg-table-5 {
+    background-color: var(--table-bg-5);
+  }
+  .bg-table-6 {
+    background-color: var(--table-bg-6);
+  }
+  .text-table-1 {
+    color: var(--table-text-1);
+  }
+  .text-table-2 {
+    color: var(--table-text-2);
+  }
+  .text-table-3 {
+    color: var(--table-text-3);
+  }
+
+  /* EditText */
+  .text-edittext-1 {
+    color: var(--edittext-text-1);
+  }
+
+  /* Border */
+  .border-primary {
+    border-color: var(--border-primary);
+  }
+  .border-secondary {
+    border-color: var(--border-secondary);
+  }
+}
+
+/* Prevent autofill background change */
+input:-webkit-autofill {
+  transition: background-color 9999s ease-in-out 0s;
+  -webkit-text-fill-color: #000 !important; /* Set text color to black or your preferred color */
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0px 1000px white inset !important; /* Prevent autofill background color */
+}
+
+/* scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* or 2px for very thin scrollbar */
+  height: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0; /* light gray */
+  border-radius: 4px; /* ✅ Applies nicely */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4; /* violet */
+  border-radius: 10px;
+  border: 2px solid transparent; /* for padding effect */
+  background-clip: content-box;
+  max-width: 8px;
+}
