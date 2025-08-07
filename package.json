@@ -13,6 +13,7 @@
     "@react-oauth/google": "^0.12.1",
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.9.0",
+    "formik": "^2.4.6",
     "libphonenumber-js": "^1.12.8",
     "papaparse": "^5.5.3",
     "react": "^19.0.0",
