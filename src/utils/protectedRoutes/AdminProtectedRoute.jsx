@@ -8,7 +8,8 @@ const AdminProtectedRoute = ({ children }) => {
     isInitializing,
     forceLogout,
     logout,
-    clearForceLogout
+    clearForceLogout,
+    isSessionLoading
   } = useAuthStore();
   const navigate = useNavigate();
 
@@ -24,6 +25,8 @@ const AdminProtectedRoute = ({ children }) => {
     logout,
     clearForceLogout)
 
+    console.log("isSessionLoading: ", isSessionLoading);
+
   useEffect(() => {
     if (forceLogout) {
       logout();
@@ -33,10 +36,15 @@ const AdminProtectedRoute = ({ children }) => {
   }, [forceLogout]);
 
   if (isInitializing) return <div>Loading...</div>;
+  if (isSessionLoading) return <div>Loading...</div>;
+
+    console.log("isSessionLoading Done: ", isSessionLoading);
+
 
   if (!user || user.role_id !== 1) {
     return <Navigate to="/login" replace />;
   }
+
 
   return children;
 };

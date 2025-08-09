@@ -20,6 +20,7 @@ export const useAuthStore = create((set, get) => ({
   isLoggingOut: false,
 
   isInitializing: true,
+  isSessionLoading: true,
   forceLogout: false,
 
   initializeFromStorage: () => {
@@ -68,6 +69,7 @@ export const useAuthStore = create((set, get) => ({
       user,
       isAdmin: user?.isAdmin || user?.role_id === 1,
       isInitializing: false,
+      isSessionLoading: false,
     });
   } catch (error) {
     console.log(error);
@@ -75,6 +77,7 @@ export const useAuthStore = create((set, get) => ({
       user: null,
       isAdmin: false,
       isInitializing: false,
+      isSessionLoading: false,
     });
   }
 },
