@@ -12,6 +12,12 @@ const AdminProtectedRoute = ({ children }) => {
   } = useAuthStore();
   const navigate = useNavigate();
 
+    // Sestion initialize
+  useEffect(() => {
+    useAuthStore.getState().initializeSessionUser();
+  
+  }, []);
+
   console.log("Admin Protected Route: ",     user,
     isInitializing,
     forceLogout,

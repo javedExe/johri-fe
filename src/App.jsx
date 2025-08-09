@@ -70,10 +70,6 @@ function App() {
     initializeFromStorage();
   }, []);
 
-  // Sestion initialize
-  useEffect(() => {
-  useAuthStore.getState().initializeSessionUser();
-}, []);
 
 
 //  useEffect(() => {
