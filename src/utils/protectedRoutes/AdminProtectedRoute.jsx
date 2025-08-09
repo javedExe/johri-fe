@@ -12,6 +12,12 @@ const AdminProtectedRoute = ({ children }) => {
   } = useAuthStore();
   const navigate = useNavigate();
 
+  console.log("Admin Protected Route: ",     user,
+    isInitializing,
+    forceLogout,
+    logout,
+    clearForceLogout)
+
   useEffect(() => {
     if (forceLogout) {
       logout();

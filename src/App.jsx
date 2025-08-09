@@ -6,6 +6,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 
 
+
 // Desktop Screens
 import LoginDesktop from "./pages/auth/desktop/LoginDesktop";
 import VerificationDesktop from "./pages/auth/desktop/VerificationDesktop";
@@ -55,6 +56,8 @@ import WorkingHours from "./components/Jewelers/jewelerDashboard/desktop/profile
 function App() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // const { setUser, setLoading } = useAuthStore();
+
 
   const initializeFromStorage = useAuthStore(
     (state) => state.initializeFromStorage
@@ -71,6 +74,24 @@ function App() {
   useEffect(() => {
   useAuthStore.getState().initializeSessionUser();
 }, []);
+
+
+//  useEffect(() => {
+//     const checkSession = async () => {
+//       try {
+//         setLoading(true);
+//         const res = await axios.get("/auth/me"); // <-- endpoint to get current user
+//         setUser(res.data.user);
+//       } catch (err) {
+//         console.log(err);
+//         setUser(null);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     checkSession();
+//   }, []);
+
 
 
   useEffect(() => {
@@ -94,6 +115,9 @@ function App() {
       <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
     );
   }
+
+  // if (loading) return <div>Loading...</div>;
+
 
   return (
     <div>
