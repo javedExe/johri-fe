@@ -8,6 +8,7 @@ import { AiOutlineBarChart } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { HiOutlineMenu } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
+import { AiOutlineSolution } from "react-icons/ai";
 
 import desktopLogo from "../../assets/desktop-logo.png";
 import productIcon from "../../assets/product-icon.png";
@@ -44,6 +45,11 @@ const Sidebar = () => {
         <img src={categoryIcon} className="w-[18px] h-[17px]" alt="category" />
       ),
       path: "/admin/dashboard/package-management",
+    },
+    {
+      label: "Invoice Management",
+      icon: <AiOutlineSolution className="text-2xl" />,
+      path: "/admin/dashboard/invoice-management",
     },
     {
       label: "Offers",

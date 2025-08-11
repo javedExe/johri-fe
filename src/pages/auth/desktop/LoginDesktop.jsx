@@ -12,7 +12,7 @@ const LoginDesktop = () => {
   const navigate = useNavigate();
   const googleLoginButton = googleSSO();
 
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "", rememberMe: false });
   const [errors, setErrors] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,9 +20,15 @@ const LoginDesktop = () => {
 
   const { validateForm, login } = useAuthStore();
 
-  const changeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+const changeHandler = (e) => {
+  const { name, type, checked, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: type === "checkbox" ? checked : value
+  });
+
+  console.log(formData);
+};
  
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -137,7 +143,11 @@ const LoginDesktop = () => {
               <div className="flex items-center">
                 <input
                   type="checkbox"
+                  name="rememberMe"
                   className="h-3 w-3 text-purple-500 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
+                  checked={formData.rememberMe}
+                  // onChange={(e) => setRememberMe(e.target.checked)}
+                  onChange={changeHandler}
                 />
                 <label
                   htmlFor="rememberMe"

@@ -34,7 +34,8 @@ import AdminProtectedRoute from "./utils/protectedRoutes/AdminProtectedRoute";
 import OTPProtectedRoute from "./utils/protectedRoutes/OTPProtectedRoute";
 import CategoryManagement from "./components/dashboard/CategoryManagement";
 import PackageManagement from "./components/dashboard/PackageManagement";
-
+import Invoice from "./components/dashboard/invoice/Invoice";
+import User from "./components/dashboard/user/User";
 
 
 // Jeweller Routes
@@ -153,11 +154,12 @@ function App() {
           }
         >
           <Route index element={<DashboardHome />} />
-          <Route path="users" element={<Users />} />
+          <Route path="users" element={<User />} />
           <Route path="jewelers" element={<Jewelers />} />
           <Route path="products" element={<Products />} />
           <Route path="category-management" element={<CategoryManagement />} />
           <Route path="package-management" element={<PackageManagement />} />
+          <Route path="invoice-management" element={<Invoice />} />
           <Route path="offers" element={<Offers />} />
           <Route path="support" element={<Support />} />
           <Route path="analytics" element={<Analytics />} />

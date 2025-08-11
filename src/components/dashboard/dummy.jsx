@@ -95,3 +95,93 @@ export const dummyPackages = [
 
 
 
+// Dummy Data for Invoice Management
+
+const orderTypes = ["Wholesale", "Retail", "Online"];
+const sellerTypes = ["Individual", "Company", "Agency"];
+const sellerNames = ["Seller Name", "John Doe", "ABC Traders", "XYZ Supplies"];
+const statuses = ["Paid", "Pending", "Overdue", "Cancelled"];
+
+export const dummyInvoice = Array.from({ length: 200 }, (_, i) => {
+  // Random values
+  const orderType = orderTypes[Math.floor(Math.random() * orderTypes.length)];
+  const sellerType = sellerTypes[Math.floor(Math.random() * sellerTypes.length)];
+  const sellerName = sellerNames[Math.floor(Math.random() * sellerNames.length)];
+  const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+  // Fake transaction ID format
+  const transactionId = `GSV${Math.floor(100000000 + Math.random() * 900000000)}UI`;
+
+  // Random date
+  const date = new Date(
+    2020,
+    Math.floor(Math.random() * 12), // month
+    Math.floor(Math.random() * 28) + 1, // day
+    Math.floor(Math.random() * 24), // hour
+    Math.floor(Math.random() * 60) // minute
+  ).toLocaleString("en-US", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+
+  return {
+    transactionId,
+    orderType,
+    sellerType,
+    sellerName,
+    dateTime: date,
+    amount: `$${(Math.random() * 900 + 100).toFixed(2)}`, // $100–$1000
+    status,
+    actions: ["view", "download"] // placeholder
+  };
+});
+
+
+
+
+
+
+// Dummy Data for User
+
+
+function generateDummyUsers(count = 200) {
+  const firstNames = ["Ramesh", "Priya", "Amit", "Sonia", "Raj", "Neha", "Kiran", "Arjun", "Pooja", "Manish"];
+  const lastNames = ["Gupta", "Sharma", "Verma", "Patel", "Singh", "Iyer", "Reddy", "Chopra", "Kumar", "Das"];
+  const statuses = ["Active", "Inactive"];
+
+  const users = [];
+
+  for (let i = 0; i < count; i++) {
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    const name = `${firstName} ${lastName}`;
+
+    const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;
+
+    const phoneNumber = "1234567890";
+    // const phoneNumber = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+    users.push({
+      id: i + 1,
+      name,
+      email,
+      phoneNumber,
+      status
+    });
+  }
+
+  return users;
+}
+
+export const dummyUser = generateDummyUsers();
+
+
+
+
