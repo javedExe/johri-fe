@@ -19,13 +19,6 @@ const AdminProtectedRoute = ({ children }) => {
   
   }, []);
 
-  console.log("Admin Protected Route: ",     user,
-    isInitializing,
-    forceLogout,
-    logout,
-    clearForceLogout)
-
-    console.log("isSessionLoading: ", isSessionLoading);
 
   useEffect(() => {
     if (forceLogout) {
@@ -37,8 +30,6 @@ const AdminProtectedRoute = ({ children }) => {
 
   if (isInitializing) return <div>Loading...</div>;
   if (isSessionLoading) return <div>Loading...</div>;
-
-    console.log("isSessionLoading Done: ", isSessionLoading);
 
 
   if (!user || user.role_id !== 1) {

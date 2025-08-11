@@ -56,7 +56,6 @@ import WorkingHours from "./components/Jewelers/jewelerDashboard/desktop/profile
 function App() {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  // const { setUser, setLoading } = useAuthStore();
 
 
   const initializeFromStorage = useAuthStore(
@@ -71,23 +70,10 @@ function App() {
   }, []);
 
 
-
-//  useEffect(() => {
-//     const checkSession = async () => {
-//       try {
-//         setLoading(true);
-//         const res = await axios.get("/auth/me"); // <-- endpoint to get current user
-//         setUser(res.data.user);
-//       } catch (err) {
-//         console.log(err);
-//         setUser(null);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     checkSession();
-//   }, []);
-
+  // Sestion initialize
+  useEffect(() => {
+  useAuthStore.getState().initializeSessionUser();
+}, []);
 
 
   useEffect(() => {

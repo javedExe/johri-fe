@@ -64,7 +64,7 @@ export const useAuthStore = create((set, get) => ({
   try {
     const response = await axios.get("/auth/session", { withCredentials: true });
     const user = response.data.user;
-    console.log("initializeSessionUser: ", response, "\n", user);
+
     set({
       user,
       isAdmin: user?.isAdmin || user?.role_id === 1,
@@ -154,7 +154,7 @@ export const useAuthStore = create((set, get) => ({
 
       return { success: true, user };
     } catch (err) {
-      return { success: false };
+      return { success: false, err };
     }
   },
 
