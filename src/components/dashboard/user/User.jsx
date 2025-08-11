@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { dummyUser } from "../dummy";
-import UserList from "./userList";
+import UserList from "./UserList";
 import UserFilters from "./UserFilters";
 
 const User = () => {
