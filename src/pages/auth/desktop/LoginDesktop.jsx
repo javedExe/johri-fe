@@ -97,7 +97,7 @@ const LoginDesktop = () => {
             <div className="flex flex-col space-y-2 mb-2">
               <label className="mb-0 ">E-mail</label>
               <input
-                maxLength={20}
+                maxLength={32}
                 name="username"
                 value={formData.username}
                 type="email"
