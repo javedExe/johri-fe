@@ -9,6 +9,7 @@ const Products = () => {
   const [filteredData, setFilteredData] = useState(dummyProducts); 
   const [viewTogel, setViewTogel] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   console.log(showModal);
   
@@ -17,14 +18,28 @@ const Products = () => {
       
       {/* Filters Section */}
       <div className="w-full lg:w-[300px]">
-        <ProductFilters data={originalData} setData={setFilteredData} setView={()=> setViewTogel(!viewTogel)} getView={viewTogel} addProductModel={() => setShowModal(true)} />
+        <ProductFilters 
+        data={originalData} setData={setFilteredData} 
+        setView={()=> setViewTogel(!viewTogel)} 
+        getView={viewTogel} 
+        addProductModel={() => setShowModal(true)}
+        setEditMode={()=> setIsEditMode(false)}
+        />
       </div>
 
       {/* Table Section */}
       <div className="h-[calc(100vh-100px)]">
       {/* <div className="flex-1 overflow-x-auto"> */}
         {
-            viewTogel? <ProductCard data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} /> : <ProductList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} />
+            viewTogel? <ProductCard data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} />
+            
+            : 
+            
+            <ProductList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal}
+            isEditMode={isEditMode}
+            setEditMode={()=> setIsEditMode(true)}
+            openProductModel={() => setShowModal(true)}
+            />
         }
 
       </div>

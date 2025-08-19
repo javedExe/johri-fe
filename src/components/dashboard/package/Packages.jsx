@@ -1,15 +1,34 @@
-import { useState } from "react";
-import { dummyPackages } from "../dummy";
+import { useEffect, useState } from "react";
+import axios from "../../../utils/axiosInstance";
+// import { dummyPackages } from "../dummy";
 import PackageFilters from "./PackageFilters";
 import PackageList from "./PackageList";
 
 
 const Packages = () => {
-  const [originalData] = useState(dummyPackages); 
-  const [filteredData, setFilteredData] = useState(dummyPackages); 
+  const [originalData, setOriginalData] = useState([]); 
+  const [filteredData, setFilteredData] = useState(originalData); 
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const fetchPackageList = async ()=>{
+          const response = await axios.get("/admin/packages/all", {
+            withCredentials: true,
+          });
+
+          setOriginalData(response.data.packages.data);   
+  }
   
+
+  useEffect(()=>{
+    fetchPackageList();
+  },[]);
+
+
+  useEffect(()=>{
+   setFilteredData(originalData);
+  },[originalData]);
+
   
   return (
 
@@ -28,6 +47,7 @@ const Packages = () => {
             <PackageList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} openProductModel={() => setShowModal(true)}  
             setEditMode={()=> setIsEditMode(true)}
             isEditMode={isEditMode}
+            fetchList={()=> fetchPackageList()}
             />
 
       </div>

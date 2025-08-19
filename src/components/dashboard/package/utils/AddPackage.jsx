@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import axios from "../../../../utils/axiosInstance";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-function AddPackage({ onClose, prevData, isEditMode }) {
+function AddPackage({ onClose, prevData, isEditMode, fetchList }) {
   const [featureOpen, setFeatureOpen] = useState(false);
+  const [formSubmit, setFormSubmit] = useState(false);
   const dropdownRef = useRef(null);
 
   const types = ["Free", "Paid"];
@@ -44,7 +46,9 @@ function AddPackage({ onClose, prevData, isEditMode }) {
         }
       ),
 
-    targetAudience: Yup.string().required("Please select a valid Targeted Audiences"),
+    targetAudience: Yup.string().required(
+      "Please select a valid Targeted Audiences"
+    ),
 
     features: Yup.array()
       .min(1, "Add at least one feature to the package.")
@@ -62,10 +66,40 @@ function AddPackage({ onClose, prevData, isEditMode }) {
     },
     enableReinitialize: true,
     validationSchema,
-    onSubmit: (values) => {
-      console.log("Validated Data:", values);
-      // Add POST API logic here
-      alert("Package saved successfully.");
+    onSubmit: async (values) => {
+      setFormSubmit(true);
+
+      if (isEditMode) {
+        const response = await axios.put(
+          `/admin/packages/${prevData.id}`,
+          values,
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.success) {
+          fetchList();
+          alert("Package Update successfully.");
+          onClose();
+        } else {
+          alert("Package Update Failed.");
+        }
+      } else {
+        const response = await axios.post("/admin/packages", values, {
+          withCredentials: true,
+        });
+
+        if (response.data.success) {
+          fetchList();
+          alert("Package saved successfully.");
+          onClose();
+        } else {
+          alert("Package saved Failed.");
+        }
+      }
+
+      setFormSubmit(false);
     },
   });
 
@@ -92,30 +126,28 @@ function AddPackage({ onClose, prevData, isEditMode }) {
     }
   };
 
-  useEffect(()=>{
-    if(!isEditMode){
+  useEffect(() => {
+    if (!isEditMode) {
       prevData = null;
     }
-  })
+  });
 
-
-useEffect(() => {
-  // console.log("prev: ", prevData);
-  if (prevData && Object.keys(prevData).length !== 0) {
-    formik.setValues({
-      name: prevData.name || "",
-      validityDays: prevData.validityDays || "",
-      type: prevData.type || "",
-      price: prevData.price || "0",
-      targetAudience: prevData.targetAudience || "",
-      features: prevData.features || [],
-    });
-  } else {
-    formik.resetForm();
-  }
-
-}, [prevData]); 
-
+  useEffect(() => {
+    if (prevData && Object.keys(prevData).length !== 0) {
+      formik.setValues({
+        name: prevData.name || "",
+        validityDays: prevData.validityDays || "",
+        type: prevData.type || "",
+        price: prevData.price || "0",
+        targetAudience: prevData.targetAudience || "",
+        features: Array.isArray(prevData.features)
+          ? prevData.features
+          : prevData.features?.split(",").map((f) => f.trim()) || [],
+      });
+    } else {
+      formik.resetForm();
+    }
+  }, [prevData]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
@@ -278,8 +310,6 @@ useEffect(() => {
                 </div>
               )}
 
-
-              
               {formik.touched.features && formik.errors.features && (
                 <span className="text-sm text-red-500">
                   {formik.errors.features}
@@ -300,12 +330,23 @@ useEffect(() => {
               </button>
             </span>
             <span className="w-full">
-              <button
-                type="submit"
-                className="bg-[#141432] text-white border py-2 rounded text-sm w-full"
-              >
-                Save
-              </button>
+              {formSubmit ? (
+                <button
+                disabled
+                  type="submit"
+                  className="bg-[#141432] text-white border py-2 rounded text-sm w-full  disabled:bg-[#3b3b55] 
+                focus:outline-none"
+                              >
+                  Save...
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="bg-[#141432] text-white border py-2 rounded text-sm w-full"
+                >
+                  Save
+                </button>
+              )}
             </span>
           </div>
         </form>

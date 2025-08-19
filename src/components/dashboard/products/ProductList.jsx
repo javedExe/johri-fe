@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { MdArrowDownward } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
 import { FiTrash } from "react-icons/fi";
@@ -16,8 +16,11 @@ import ringProduct from "../../../assets/ringProduct.png";
 import solidLocketProduct from "../../../assets/solidLocketProduct.png";
 import sharpLocketProduct from "../../../assets/sharpLocketProduct.png";
 
-function ProductList({ data, closeProductModel, productModelVisible }) {
+function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
+  setEditMode, openProductModel }) {
+
   const tableRef = useRef(null);
+  const [formData, setFormData] = useState({});
 
   const {
     paginatedData,
@@ -26,6 +29,7 @@ function ProductList({ data, closeProductModel, productModelVisible }) {
     handlePageChange,
     // totalPages,
   } = usePagination(data, 1, 10);
+  
 
   // Scroll to top of table on page change
   useEffect(() => {
@@ -34,13 +38,29 @@ function ProductList({ data, closeProductModel, productModelVisible }) {
     }
   }, [currentPage]);
 
+
+
+   const handleEdit = (value) => {
+    console.log(value);
+    setEditMode();
+    setFormData(value);
+    openProductModel();
+  };
+
   return (
     <>
 <div
   className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-full sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap lg:w-[calc(100%-297px)] z-30"
 >
 
-        {productModelVisible && <AddProduct onClose={closeProductModel} />}
+        {productModelVisible && 
+        <AddProduct 
+          onClose={closeProductModel}
+          prevData={formData}
+          isEditMode={isEditMode}
+        />
+        
+        }
 
         {/* Scroll container only for table */}
         <div
@@ -182,7 +202,10 @@ function ProductList({ data, closeProductModel, productModelVisible }) {
                   >
                     {row.action === "Approved" && (
                       <div className="flex gap-2">
-                        <AiOutlineEdit className="text-gray-600  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
+                        <AiOutlineEdit className="text-gray-600  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
+                        onClick={() => handleEdit(row)}
+                        />
+
                         <IoToggle className="w-7 h-7 text-[#1677FF] cursor-pointer" />
                       </div>
                     )}

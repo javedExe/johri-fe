@@ -6,7 +6,8 @@ function AddUser({ onClose }) {
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required."),
     email: Yup.string().email("Invalid email").required("Email is required."),
-    phoneNumber: Yup.string().required("Phone Number is required."),
+    phoneNumber: Yup.string().required("Phone Number is required.")
+      .length(10, "Enter Valid number."),
     status: Yup.string().required("Status is required."),
   });
 

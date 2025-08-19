@@ -58,7 +58,8 @@ const filterData = (search, type, status) => {
   }
 
   if (status) {
-    filtered = filtered.filter((j) => j.status === status);
+    const statusBool = status === "true";
+    filtered = filtered.filter((j) => j.status === statusBool);
   }
 
   setData(filtered);
@@ -126,8 +127,8 @@ const filterData = (search, type, status) => {
             onChange={handleStatusFilter}
           >
             <option value="">Status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
             <span className="block w-2 h-2 border-t-2 border-r-2 border-gray-600 transform rotate-135"></span>

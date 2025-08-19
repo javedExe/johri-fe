@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import backgroundImage from "../../../assets/background.jpg";
 import desktopLogo from "../../../assets/desktop-logo.png";
 import { FiEye } from "react-icons/fi";
@@ -6,30 +6,33 @@ import { FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
-import googleSSO from "../../../utils/googleSSO";
 
 const LoginDesktop = () => {
   const navigate = useNavigate();
-  const googleLoginButton = googleSSO();
 
-  const [formData, setFormData] = useState({ username: "", password: "", rememberMe: false });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    role: "admin",
+    rememberMe: false,
+  });
   const [errors, setErrors] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [googleError, setGoogleError] = useState("");
 
   const { validateForm, login } = useAuthStore();
 
-const changeHandler = (e) => {
-  const { name, type, checked, value } = e.target;
-  setFormData({
-    ...formData,
-    [name]: type === "checkbox" ? checked : value
-  });
+  const changeHandler = (e) => {
+    const { name, type, checked, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
 
-  console.log(formData);
-};
- 
+    console.log(formData);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const { isValid, errors: validationErrors } = validateForm(formData);
@@ -42,27 +45,24 @@ const changeHandler = (e) => {
     const result = await login(formData);
     setLoading(false);
 
-
-    // Only for testing
-    if (result.test) {
-      console.log("Local");
-      navigate("/admin/dashboard");
-    }
-
-    console.log("Me: ", result);
-
-
     // Actual implementesion
     if (result.success) {
       console.log(result?.response?.data?.message || "Login successful.");
-      // console.log(result.response.data.message);
       navigate("/admin/dashboard");
-
     } else {
       console.log(result.message);
       setErrors({ server: result.message || "Login failed" });
     }
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "google-auth") {
+      setGoogleError(
+        "Google authentication failed. Please try again or use the correct account."
+      );
+    }
+  }, []);
 
   return (
     <main className="min-h-screen flex">
@@ -125,7 +125,7 @@ const changeHandler = (e) => {
                 className="absolute right-3 top-[38px] text-gray-300 cursor-pointer pr-1"
                 onClick={() => setPasswordVisible(!passwordVisible)}
               >
-                {passwordVisible ? <FiEye /> : <FiEyeOff /> }
+                {passwordVisible ? <FiEye /> : <FiEyeOff />}
               </span>
 
               {errors?.password && (
@@ -146,7 +146,6 @@ const changeHandler = (e) => {
                   name="rememberMe"
                   className="h-3 w-3 text-purple-500 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
                   checked={formData.rememberMe}
-                  // onChange={(e) => setRememberMe(e.target.checked)}
                   onChange={changeHandler}
                 />
                 <label
@@ -172,9 +171,8 @@ const changeHandler = (e) => {
               className="bg-black text-white rounded p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out disabled:opacity-50"
               disabled={loading || !formData.username || !formData.password}
             >
-              {loading ? "Submitting..." : "Log in"}
+              {loading ? "Loging..." : "Log in"}
             </button>
-
           </form>
 
           {/* Divider */}
@@ -184,10 +182,15 @@ const changeHandler = (e) => {
             <div className="h-px flex-1 bg-gray-300" />
           </div>
 
+          {/* Google Login Failed Error message */}
+          {googleError && (
+            <div className="error text-red-500 text-sm mb-4">{googleError}</div>
+          )}
+
           {/* Google Button */}
           <div className="flex justify-center">
-            <button
-              onClick={googleLoginButton}
+            <a
+              href="http://localhost:5001/auth/google?type=admin"
               className="flex items-center justify-center w-full gap-2 px-6 py-2 bg-white text-gray-700 font-medium  outline-1 outline-purple-500 rounded-md shadow-sm hover:shadow-md transition-all duration-150 active:scale-98 ease-in-out cursor-pointer"
             >
               <img
@@ -196,8 +199,9 @@ const changeHandler = (e) => {
                 className="w-5 h-5"
               />
               Log in with Google
-            </button>
+            </a>
           </div>
+          
         </div>
       </section>
     </main>

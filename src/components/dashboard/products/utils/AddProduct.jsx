@@ -1,21 +1,55 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "../../../../utils/axiosInstance";
 import { FaCirclePlus } from "react-icons/fa6";
 import uploadBoxIcon from "../../../../assets/uploadBoxIcon.png";
 
 const MAX_TOTAL_SIZE_MB = 15;
-const materialTypesList = ["Silver", "Gold", "Platinum", "Gemstone", "Diamond"];
+const materialsTypesList = ["Silver", "Gold", "Platinum", "Gemstone", "Diamond"];
 const SUPPORTED_FORMATS = ['image/jpeg', 'image/png'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 
-function AddProduct({ onClose }) {
+
+// Define category and subcategory mappings
+const categoryOptions = [
+  { value: "Rings", label: "Rings" },
+  { value: "Necklace", label: "Necklace" },
+  { value: "Bracelet", label: "Bracelet" },
+  { value: "Earrings", label: "Earrings" }
+];
+
+const subcategoryOptions = {
+  Rings: [
+    { value: "Engagement", label: "Engagement Rings" },
+    { value: "Wedding", label: "Wedding Bands" },
+    { value: "Fashion", label: "Fashion Rings" }
+  ],
+  Necklace: [
+    { value: "Pendant", label: "Pendant Necklaces" },
+    { value: "Choker", label: "Chokers" },
+    { value: "Chain", label: "Chains" }
+  ],
+  Bracelet: [
+    { value: "Bangle", label: "Bangles" },
+    { value: "Cuff", label: "Cuffs" },
+    { value: "Charm", label: "Charm Bracelets" }
+  ],
+  Earrings: [
+    { value: "Stud", label: "Stud Earrings" },
+    { value: "Hoop", label: "Hoops" },
+    { value: "Drop", label: "Drop Earrings" }
+  ]
+};
+
+
+function AddProduct({ onClose, prevData, isEditMode }) {
 
   
   const fileInputRef = useRef(null);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [materialOpen, setMaterialOpen] = useState(false);
+  const [materialsOpen, setmaterialsOpen] = useState(false);
 
   const validationSchema = Yup.object().shape({
 
@@ -25,10 +59,16 @@ function AddProduct({ onClose }) {
     price: Yup.number()
       .min(1, "Enter a valid product price.")
       .required("Enter a valid product price."),
+    weight: Yup.number()
+      // .min(1, "Enter a valid product weight.")
+      .positive("Enter a valid weight.")
+      .required("Enter a valid product weight."),
 
     category: Yup.string().required("Please select a product category."),
+  
+    subcategory: Yup.string().required("Please select a subcategory"),
 
-    material: Yup.array().min(1, "Select at least one material"),
+    materials: Yup.array().min(1, "Select at least one material"),
 
     description: Yup.string()
     .max(1000, "Description too long."),
@@ -50,18 +90,72 @@ function AddProduct({ onClose }) {
     initialValues: {
       product_name: "",
       price: 0,
+      weight: 0,
       category: "",
-      material: [],
+      subcategory: "",
+      materials: [],
       description: "",
       status: "",
       images: [],
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log("Submitted:", values);
-      alert(`Product Added Successfully! \n${values.product_name} is now in your catalog.`);
-      onClose();
-    },
+    onSubmit: async (values) => {
+
+      try {
+      // 1. Create FormData object
+      const formData = new FormData();
+
+      // 2. Transform status to availability
+      const { status, product_name, ...rest } = values;
+      const submissionData = {
+        ...rest,
+        availability: status,
+        name: product_name
+      };
+
+      // 3. Append all fields to FormData
+      Object.entries(submissionData).forEach(([key, value]) => {
+        if (key === 'images') {
+          // Handle image files
+          value.forEach((file) => {
+            formData.append('images', file);
+          });
+        } else if (Array.isArray(value)) {
+          // Handle arrays (like materials)
+          value.forEach((item) => {
+            formData.append(key, item);
+          });
+        } else {
+          // Handle regular fields
+          formData.append(key, value);
+        }
+      });
+
+      console.log("FormData: ", formData);
+
+      formData.append("status", "approved");
+
+      // 4. Make the request with proper headers
+      const response = await axios.post('/admin/products', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+
+      console.log(response);
+
+      if (response.data.success) {
+        alert("Product saved successfully.");
+        onClose();
+      } else {
+        alert("Failed to save product: " + (response.data.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Failed to save product. Please try again.");
+    }
+  },
   });
 
   const handleFiles = (files) => {
@@ -89,15 +183,15 @@ function AddProduct({ onClose }) {
     setImagePreviews(updatedPreviews);
   };
 
-  const toggleMaterial = (material) => {
-    const selected = formik.values.material;
-    if (selected.includes(material)) {
+  const togglematerials = (materials) => {
+    const selected = formik.values.materials;
+    if (selected.includes(materials)) {
       formik.setFieldValue(
-        "material",
-        selected.filter((m) => m !== material)
+        "materials",
+        selected.filter((m) => m !== materials)
       );
     } else {
-      formik.setFieldValue("material", [...selected, material]);
+      formik.setFieldValue("materials", [...selected, materials]);
     }
   };
 
@@ -114,6 +208,51 @@ function AddProduct({ onClose }) {
     e.preventDefault();
     handleFiles(e.dataTransfer.files);
   };
+
+    // Handle category change - reset subcategory when category changes
+const handleCategoryChange = (e) => {
+  formik.setFieldValue('category', e.target.value);
+  formik.setFieldTouched('category', true, false); // Mark as touched
+  formik.setFieldValue('subcategory', '');
+};
+
+
+    // Edite Button Work here
+
+  useEffect(() => {
+    if (!isEditMode) {
+      prevData = null;
+    }
+  });
+
+    useEffect(() => {
+
+      console.log("Product preData: ", prevData);
+
+      if (prevData && Object.keys(prevData).length !== 0) {
+        formik.setValues({
+          product_name: prevData.product_name || "",
+          category: prevData.category || "",
+          subcategory: prevData.subcategory || "",
+          price: prevData.price || "0",
+          weight: prevData.weight || "0",
+          description: prevData.description || "",
+          status: prevData.status || "",
+          materials: Array.isArray(prevData.materials)
+            ? prevData.materials
+            : prevData.materials?.split(",").map((f) => f.trim()) || [],
+          images: Array.isArray(prevData.images)
+            ? prevData.images
+            : prevData.images?.split(",").map((f) => f.trim()) || [],
+
+
+        });
+      } else {
+        formik.resetForm();
+      }
+    }, [prevData]);
+
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
@@ -202,8 +341,66 @@ function AddProduct({ onClose }) {
             )}
           </div>
 
+          {/* Product Name */}
+          <div>
+            <div>
+              <label className="text-sm font-medium mb-1">
+                Product Name<span className="text-red-500">*</span>
+              </label>
+            </div>
+              <input
+                name="product_name"
+                type="text"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.product_name}
+                className="w-full border border-gray-400 rounded px-3 py-2 text-sm"
+              />
+              {formik.errors.product_name && formik.touched.product_name && (
+                <p className="text-sm text-red-500">
+                  {formik.errors.product_name}
+                </p>
+              )}
+          </div>
+
           {/* Product Name and Price */}
           <div className="flex gap-4">
+            <div className="flex flex-col w-1/2">
+              <label className="text-sm font-medium mb-1">
+                Product Weight<span className="text-red-500">*</span>
+              </label>
+              <input
+                name="weight"
+                type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.weight}
+                className="border border-gray-400 rounded px-3 py-2 text-sm"
+              />
+              {formik.errors.weight && formik.touched.weight && (
+                <p className="text-sm text-red-500">
+                  {formik.errors.weight}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col w-1/2">
+              <label className="text-sm font-medium mb-1">
+                Price (INR)<span className="text-red-500">*</span>
+              </label>
+              <input
+                name="price"
+                type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.price}
+                className="border border-gray-400 rounded px-3 py-2 text-sm"
+              />
+              {formik.errors.price && formik.touched.price && (
+                <p className="text-sm text-red-500">{formik.errors.price}</p>
+              )}
+            </div>
+          </div>
+          {/* <div className="flex gap-4">
             <div className="flex flex-col w-1/2">
               <label className="text-sm font-medium mb-1">
                 Product Name<span className="text-red-500">*</span>
@@ -238,10 +435,10 @@ function AddProduct({ onClose }) {
                 <p className="text-sm text-red-500">{formik.errors.price}</p>
               )}
             </div>
-          </div>
+          </div> */}
 
           {/* Category */}
-          <div>
+          {/* <div>
             <label className="text-sm font-medium mb-1 block">
               Category<span className="text-red-500">*</span>
             </label>
@@ -260,7 +457,58 @@ function AddProduct({ onClose }) {
             {formik.errors.category && formik.touched.category && (
               <p className="text-sm text-red-500">{formik.errors.category}</p>
             )}
+          </div> */}
+
+
+        {/* Category Dropdown */}
+        <div>
+          <label className="text-sm font-medium mb-1 block">
+            Category<span className="text-red-500">*</span>
+          </label>
+          <select
+            name="category"
+            onChange={handleCategoryChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.category}
+            className="border border-gray-400 rounded w-full px-3 py-2 text-sm"
+          >
+            <option value="">Select Category</option>
+            {categoryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {formik.errors.category && formik.touched.category && (
+            <p className="text-sm text-red-500">{formik.errors.category}</p>
+          )}
+        </div>
+
+        {/* Subcategory Dropdown (only shown when category is selected) */}
+        {formik.values.category && (
+          <div>
+            <label className="text-sm font-medium mb-1 block">
+              Subcategory<span className="text-red-500">*</span>
+            </label>
+            <select
+              name="subcategory"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.subcategory}
+              className="border border-gray-400 rounded w-full px-3 py-2 text-sm"
+            >
+              <option value="">Select Subcategory</option>
+              {subcategoryOptions[formik.values.category]?.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {formik.errors.subcategory && formik.touched.subcategory && (
+              <p className="text-sm text-red-500">{formik.errors.subcategory}</p>
+            )}
           </div>
+        )}
 
           {/* Material */}
           <div className="">
@@ -270,34 +518,34 @@ function AddProduct({ onClose }) {
             <div className="relative">
             <div
               className="border rounded w-full px-3 py-2 text-sm border-gray-400"
-              onClick={() => setMaterialOpen(!materialOpen)}
+              onClick={() => setmaterialsOpen(!materialsOpen)}
             >
-              {formik.values.material.length > 0
-                ? formik.values.material.join(", ")
+              {formik.values.materials.length > 0
+                ? formik.values.materials.join(", ")
                 : "Select materials"}
             </div>
 
-            {materialOpen && (
+            {materialsOpen && (
               <div className="absolute z-10 mt-1 rounded-md bg-white shadow-lg max-h-60 overflow-y-auto border w-full">
-                {materialTypesList.map((material) => (
+                {materialsTypesList.map((materials) => (
                   <label
-                    key={material}
+                    key={materials}
                     className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                   >
                     <input
                       type="checkbox"
-                      checked={formik.values.material.includes(material)}
-                      onChange={() => toggleMaterial(material)}
+                      checked={formik.values.materials.includes(materials)}
+                      onChange={() => togglematerials(materials)}
                       className="form-checkbox text-indigo-600 rounded mr-2"
                     />
-                    {material}
+                    {materials}
                   </label>
                 ))}
               </div>
             )}
-            {formik.touched.material && formik.errors.material && (
+            {formik.touched.materials && formik.errors.materials && (
               <div className="text-red-500 text-sm mt-1">
-                {formik.errors.material}
+                {formik.errors.materials}
               </div>
             )}
 
@@ -334,8 +582,8 @@ function AddProduct({ onClose }) {
               className="border border-gray-400 rounded w-full px-3 py-2 text-sm"
             >
               <option value="">Select Type</option>
-              <option value="in_stock">In Stock</option>
-              <option value="out_of_stock">Out of Stock</option>
+              <option value="In Stock">In Stock</option>
+              <option value="Out of Stock">Out of Stock</option>
             </select>
             {formik.errors.status && formik.touched.status && (
               <p className="text-sm text-red-500">{formik.errors.status}</p>
