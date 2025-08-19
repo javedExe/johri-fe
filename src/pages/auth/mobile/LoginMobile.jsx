@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import backgroundImage from "../../../assets/background.jpg";
 import mobileLogo from "../../../assets/mobile-logo.png";
 import { FiEye } from "react-icons/fi";
@@ -6,6 +6,8 @@ import { FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
+
+
 
 const LoginMobile = () => {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ const LoginMobile = () => {
   const [errors, setErrors] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleError, setGoogleError] = useState("");
 
 
 
@@ -44,6 +47,17 @@ const LoginMobile = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "google-auth") {
+      setGoogleError(
+        "Google authentication failed. Please try again or use the correct account."
+      );
+    }
+  }, []);
+
   return (
     <main
       className="relative min-h-screen w-full h-full m-0 bg-cover bg-center flex flex-col"
@@ -69,6 +83,7 @@ const LoginMobile = () => {
           <div className="flex flex-col space-y-2 mb-2">
             <label className="mb-1 font-medium text-sm">E-mail</label>
             <input
+              maxLength={20}
               name="username"
               value={formData.username}
               type="text"
@@ -84,6 +99,7 @@ const LoginMobile = () => {
           <div className="flex flex-col space-y-2 mb-0 relative">
             <label className="block mb-1 font-medium text-sm">Password</label>
             <input
+              maxLength={20}
               type={passwordVisible ? "text" : "password"}
               name="password"
               value={formData.password}
@@ -155,6 +171,12 @@ const LoginMobile = () => {
           <div className="h-px flex-1 bg-gray-300" />
         </div>
 
+
+                  {/* Google Login Failed Error message */}
+          {googleError && (
+            <div className="error text-red-500 text-sm mb-4">{googleError}</div>
+          )}
+
         {/* Google Button */}
         <div className="flex justify-center">
           <a
@@ -175,3 +197,8 @@ const LoginMobile = () => {
 };
 
 export default LoginMobile;
+
+
+
+
+

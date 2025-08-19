@@ -28,13 +28,13 @@ const VerificationDesktop = () => {
     inputRefs[0].current.focus();
   }, []);
 
-  useEffect(() => {
-    if (isExpired) return;
-    const filled = otp.every((digit) => digit !== "");
-    if (filled && !isExpired) {
-      handleVerifyOTP();
-    }
-  }, [otp, isExpired]);
+  // useEffect(() => {
+  //   if (isExpired) return;
+  //   const filled = otp.every((digit) => digit !== "");
+  //   if (filled && !isExpired) {
+  //     handleVerifyOTP();
+  //   }
+  // }, [otp, isExpired]);
 
   useEffect(() => {
     if (timer > 0) {

@@ -28,12 +28,12 @@ const VerificationMobile = () => {
     inputRefs[0].current.focus();
   }, []);
 
-  useEffect(() => {
-    const filled = otp.every((digit) => digit !== "");
-    if (filled && !isExpired) {
-      handleVerifyOTP();
-    }
-  }, [otp, isExpired]);
+  // useEffect(() => {
+  //   const filled = otp.every((digit) => digit !== "");
+  //   if (filled && !isExpired) {
+  //     handleVerifyOTP();
+  //   }
+  // }, [otp, isExpired]);
 
   useEffect(() => {
     if (timer > 0) {
@@ -208,14 +208,6 @@ const VerificationMobile = () => {
             </button>
           )}
         </div>
-
-        {/* <button
-          onClick={() => navigate("/forgot-password")}
-          className="flex justify-center items-center bg-white border-[1px] border-gray-400 text-sm text-[#7F56D9] rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
-        >
-          <GoArrowLeft className="pr-3 text-4xl text-[#7F56D9]"></GoArrowLeft>
-          Back
-        </button> */}
       </section>
     </main>
   );

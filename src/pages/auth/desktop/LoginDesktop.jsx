@@ -97,6 +97,7 @@ const LoginDesktop = () => {
             <div className="flex flex-col space-y-2 mb-2">
               <label className="mb-0 ">E-mail</label>
               <input
+                maxLength={20}
                 name="username"
                 value={formData.username}
                 type="email"
@@ -113,6 +114,7 @@ const LoginDesktop = () => {
             <div className="flex flex-col space-y-2 mb-0 relative">
               <label className="block mb-0 ">Password</label>
               <input
+                maxLength={20}
                 type={passwordVisible ? "text" : "password"}
                 name="password"
                 value={formData.password}
@@ -209,3 +211,10 @@ const LoginDesktop = () => {
 };
 
 export default LoginDesktop;
+
+
+
+
+
+
+

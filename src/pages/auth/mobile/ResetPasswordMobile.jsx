@@ -87,6 +87,7 @@ const ResetPasswordMobile = () => {
                 New Password
               </label>
               <input
+                maxLength={20}
                 name="password"
                 value={password}
                 type={passwordVisible ? "text" : "password"}
@@ -116,6 +117,7 @@ const ResetPasswordMobile = () => {
                 Re-enter Password
               </label>
               <input
+                maxLength={20}
                 name="confirmPassword"
                 value={confirmPassword}
                 type={confirmPasswordVisible ? "text" : "password"}

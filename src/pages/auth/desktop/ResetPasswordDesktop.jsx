@@ -82,6 +82,7 @@ const ResetPasswordDesktop = () => {
               <div className="relative flex flex-col space-y-2">
                 <label className="mb-1 text-gray-500 font-medium">New Password</label>
                 <input
+                  maxLength={20}
                   name="password"
                   value={password}
                   type={passwordVisible ? "text" : "password"}
@@ -95,7 +96,7 @@ const ResetPasswordDesktop = () => {
                   className="absolute top-[50px] transform -translate-y-1/2 right-3 text-gray-300 cursor-pointer pr-1"
                   onClick={() => setPasswordVisible(!passwordVisible)}
                 >
-                  {passwordVisible ? <FiEyeOff /> : <FiEye />}
+                  {passwordVisible ?  <FiEye /> : <FiEyeOff />}
                 </span>
               </div>
 
@@ -103,6 +104,7 @@ const ResetPasswordDesktop = () => {
               <div className="relative flex flex-col space-y-2">
                 <label className="mb-1 text-gray-500 font-medium">Re-enter Password</label>
                 <input
+                  maxLength={20}
                   name="confirmPassword"
                   value={confirmPassword}
                   type={confirmPasswordVisible ? "text" : "password"}
