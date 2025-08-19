@@ -6,11 +6,9 @@ import { FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
-import googleSSO from "../../../utils/googleSSO";
 
 const LoginMobile = () => {
   const navigate = useNavigate();
-  const googleLoginButton = googleSSO();
 
   const { validateForm, login } = useAuthStore();
 
@@ -159,8 +157,8 @@ const LoginMobile = () => {
 
         {/* Google Button */}
         <div className="flex justify-center">
-          <button
-            onClick={googleLoginButton}
+          <a
+            href="https://johri-be.onrender.com/auth/google?type=admin"
             className="flex items-center justify-center w-full gap-2 py-2 bg-white text-gray-700 font-medium  outline-1 outline-purple-500 rounded-md shadow-sm hover:shadow-md transition-all duration-150 active:scale-98 ease-in-out cursor-pointer text-sm"
           >
             <img
@@ -169,7 +167,7 @@ const LoginMobile = () => {
               className="w-5 h-5"
             />
             Log in with Google
-          </button>
+          </a>
         </div>
       </section>
     </main>

@@ -190,7 +190,7 @@ const LoginDesktop = () => {
           {/* Google Button */}
           <div className="flex justify-center">
             <a
-              href="http://localhost:5001/auth/google?type=admin"
+              href="https://johri-be.onrender.com/auth/google?type=admin"
               className="flex items-center justify-center w-full gap-2 px-6 py-2 bg-white text-gray-700 font-medium  outline-1 outline-purple-500 rounded-md shadow-sm hover:shadow-md transition-all duration-150 active:scale-98 ease-in-out cursor-pointer"
             >
               <img
