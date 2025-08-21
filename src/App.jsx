@@ -71,10 +71,10 @@ function App() {
   }, []);
 
 
-  // Session initialize
-//   useEffect(() => {
-//   useAuthStore.getState().initializeSessionUser();
-// }, []);
+  Session initialize
+  useEffect(() => {
+  useAuthStore.getState().initializeSessionUser();
+}, []);
 
 
   useEffect(() => {
