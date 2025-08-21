@@ -71,7 +71,7 @@ function App() {
   }, []);
 
 
-  Session initialize
+  // Session initialize
   useEffect(() => {
   useAuthStore.getState().initializeSessionUser();
 }, []);
