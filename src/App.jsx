@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PageNotFound from "./pages/PageNotFound";
-import ProtectedRoute from "./utils/ProtectedRoute";
+// import ProtectedRoute from "./utils/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 
 
@@ -21,7 +21,7 @@ import VerificationMobile from "./pages/auth/mobile/VerificationMobile";
 import ResetPasswordMobile from "./pages/auth/mobile/ResetPasswordMobile";
 
 // Admin Dashboard Routes
-import Users from "./components/dashboard/Users/Users";
+// import Users from "./components/dashboard/Users/Users";
 import Jewelers from "./components/Jewelers/Jewelers";
 import Products from "./components/dashboard/Products";
 import Offers from "./components/dashboard/Offers";
@@ -38,18 +38,18 @@ import Invoice from "./components/dashboard/invoice/Invoice";
 import User from "./components/dashboard/user/User";
 
 
-// Jeweller Routes
-import JewelerLogin from "./components/Jewelers/JewelerLogin";
-import JewelerForgetPassword from "./components/Jewelers/JewelerForgotPassword";
-import JewelerOtpVerification from "./components/Jewelers/JewelerOtpVerfication";
-import JewelerResetPassword from "./components/Jewelers/JewelerResetPassword";
+// // Jeweller Routes
+// import JewelerLogin from "./components/Jewelers/JewelerLogin";
+// import JewelerForgetPassword from "./components/Jewelers/JewelerForgotPassword";
+// import JewelerOtpVerification from "./components/Jewelers/JewelerOtpVerfication";
+// import JewelerResetPassword from "./components/Jewelers/JewelerResetPassword";
 
-// Jeweler Dashboard Routes
-import JewelerDashboardDesktop from "./components/Jewelers/jewelerDashboard/JewelerDashboardDesktop";
-import Profile from "./components/Jewelers/jewelerDashboard/desktop/profile/Profile";
-import PersonalInformation from "./components/Jewelers/jewelerDashboard/desktop/profile/PersonalInformation";
-import BusinessInformation from "./components/Jewelers/jewelerDashboard/desktop/profile/BusinessInformation";
-import WorkingHours from "./components/Jewelers/jewelerDashboard/desktop/profile/WorkingHours";
+// // Jeweler Dashboard Routes
+// import JewelerDashboardDesktop from "./components/Jewelers/jewelerDashboard/JewelerDashboardDesktop";
+// import Profile from "./components/Jewelers/jewelerDashboard/desktop/profile/Profile";
+// import PersonalInformation from "./components/Jewelers/jewelerDashboard/desktop/profile/PersonalInformation";
+// import BusinessInformation from "./components/Jewelers/jewelerDashboard/desktop/profile/BusinessInformation";
+// import WorkingHours from "./components/Jewelers/jewelerDashboard/desktop/profile/WorkingHours";
 
 
 
@@ -71,10 +71,10 @@ function App() {
   }, []);
 
 
-  // Sestion initialize
-  useEffect(() => {
-  useAuthStore.getState().initializeSessionUser();
-}, []);
+  // Session initialize
+//   useEffect(() => {
+//   useAuthStore.getState().initializeSessionUser();
+// }, []);
 
 
   useEffect(() => {
@@ -173,7 +173,7 @@ function App() {
 
 
           {/* Jeweler Route Start */}
-
+{/* 
         <Route
           path="/jeweler"
           element={<JewelerLogin />}
@@ -198,11 +198,11 @@ function App() {
           path="/jeweler/reset-password"
           element={<JewelerResetPassword />}
         />
-
+ */}
 
 
       {/* Jeweler Dashboard */}
-        <Route
+        {/* <Route
           path="/jeweler/dashboard"
           element={
             <AdminProtectedRoute>
@@ -210,7 +210,6 @@ function App() {
             </AdminProtectedRoute>
           }
         >
-          {/* <Route index element={<Profile />}> */}
           <Route path="profile" element={<Profile />}>
               <Route index element={<PersonalInformation />} />
               <Route path="business-informationt" element={<BusinessInformation />} />
@@ -222,7 +221,7 @@ function App() {
           <Route path="products" element={<Products />} />
           <Route path="category-management" element={<CategoryManagement />} />
           <Route path="package-management" element={<PackageManagement />} />
-        </Route>
+        </Route> */}
 
 
 

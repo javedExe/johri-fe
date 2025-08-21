@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import verifyOTPbg from "../../../assets/verify-otp-bg.png";
 import mobileLogo from "../../../assets/mobile-logo.png";
 import ProgressIndicator from "../../../utils/ProgressIndicator";
@@ -13,7 +13,8 @@ const VerificationMobile = () => {
 
   const { verifyOtp, sendOtp } = useAuthStore();
 
-  const inputRefs = Array.from({ length: 6 }, () => React.createRef());
+  // Use useRef to keep refs stable across renders
+  const inputRefs = useRef(Array.from({ length: 6 }, () => React.createRef()));
 
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(300);
@@ -25,30 +26,28 @@ const VerificationMobile = () => {
   }, [otp]);
 
   useEffect(() => {
-    inputRefs[0].current.focus();
+    // Focus first input on mount
+    inputRefs.current[0].current?.focus();
   }, []);
 
-  // useEffect(() => {
-  //   const filled = otp.every((digit) => digit !== "");
-  //   if (filled && !isExpired) {
-  //     handleVerifyOTP();
-  //   }
-  // }, [otp, isExpired]);
-
   useEffect(() => {
-    if (timer > 0) {
-      const countdown = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdown);
-            setIsExpired(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(countdown);
+    if (timer <= 0) {
+      setIsExpired(true);
+      return;
     }
+
+    const countdown = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdown);
+          setIsExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(countdown);
   }, [timer]);
 
   const handleChange = (element, index) => {
@@ -59,8 +58,8 @@ const VerificationMobile = () => {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value && index < inputRefs.length - 1) {
-      inputRefs[index + 1].current.focus();
+    if (value && index < inputRefs.current.length - 1) {
+      inputRefs.current[index + 1].current?.focus();
     }
   };
 
@@ -75,27 +74,27 @@ const VerificationMobile = () => {
         setOtp(newOtp);
       } else if (index > 0) {
         // Move to previous box and clear it
-        inputRefs[index - 1].current.focus();
+        inputRefs.current[index - 1].current?.focus();
         newOtp[index - 1] = "";
         setOtp(newOtp);
       }
     }
     // Allow arrow key navigation
     else if (e.key === "ArrowLeft" && index > 0) {
-      inputRefs[index - 1].current.focus();
-    } else if (e.key === "ArrowRight" && index < inputRefs.length - 1) {
-      inputRefs[index + 1].current.focus();
+      inputRefs.current[index - 1].current?.focus();
+    } else if (e.key === "ArrowRight" && index < inputRefs.current.length - 1) {
+      inputRefs.current[index + 1].current?.focus();
     }
   };
 
   const handleResend = async () => {
     setOtp(new Array(6).fill(""));
+    setIsExpired(false);
     setTimer(300);
     // resend API
     const result = await sendOtp(email);
     if (result.success) {
-      inputRefs[0].current.focus();
-      // navigate("/verification");
+      inputRefs.current[0].current?.focus();
     } else {
       setError(result.message);
     }
@@ -124,7 +123,6 @@ const VerificationMobile = () => {
         className="relative flex flex-col justify-between bg-opacity-40 w-full h-[50vh] m-0 text-white px-4 pt-4 bg-cover bg-center brightness-110"
         style={{ backgroundImage: `url(${verifyOTPbg})` }}
       >
-        {/* Gradient Overlay using custom class */}
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 to-black/0 z-0 h-[50vh]" />
 
         <div className="relative z-10 flex flex-col justify-between h-full px-0 pt-4">
@@ -132,9 +130,7 @@ const VerificationMobile = () => {
             <img src={mobileLogo} alt="Johri Logo" className="w-18 h-8" />
           </div>
           <div>
-            <h2 className="text-3xl font-garamond">
-              Discover Timeless Craftsmanship.
-            </h2>
+            <h2 className="text-3xl font-garamond">Discover Timeless Craftsmanship.</h2>
             <div className="m-0">
               <ProgressIndicator currentStep={2} />
             </div>
@@ -144,11 +140,9 @@ const VerificationMobile = () => {
 
       {/* Forgot Password form */}
       <section className="bg-white bg-opacity-50 h-[50vh] px-4 py-4 ">
-        <IoMdMail className="bg-purple-200 text-3xl border-none rounded-full text-[#7F56D9]  p-2 w-9 h-9"></IoMdMail>
+        <IoMdMail className="bg-purple-200 text-3xl border-none rounded-full text-[#7F56D9] p-2 w-9 h-9" />
         <h2 className="text-xl font-medium">Verification</h2>
-        <h2 className="text-xs font-medium pb-2 text-gray-500">
-          For added security, please enter the OTP sent to your email address.
-        </h2>
+        <h2 className="text-xs font-medium pb-2 text-gray-500">For added security, please enter the OTP sent to your email address.</h2>
 
         <p className="text-gray-700 font-medium mt-1">Enter OTP</p>
 
@@ -159,7 +153,7 @@ const VerificationMobile = () => {
               type="text"
               maxLength="1"
               value={data}
-              ref={inputRefs[index]}
+              ref={inputRefs.current[index]}
               disabled={isExpired}
               autoComplete="one-time-code"
               aria-label={`OTP Digit ${index + 1}`}
@@ -173,10 +167,7 @@ const VerificationMobile = () => {
 
         <p className="text-xs text-gray-600 mb-6">
           Didn't receive a code?{" "}
-          <span
-            className="text-[#7F56D9] font-bold cursor-pointer"
-            onClick={handleResend}
-          >
+          <span className="text-[#7F56D9] font-bold cursor-pointer" onClick={handleResend}>
             Resend Code
           </span>{" "}
         </p>
@@ -203,7 +194,7 @@ const VerificationMobile = () => {
               onClick={() => navigate("/forgot-password")}
               className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
             >
-              <GoArrowLeft className="pr-3 text-4xl text-purple-500"></GoArrowLeft>
+              <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
               Back
             </button>
           )}
