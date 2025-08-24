@@ -2,7 +2,6 @@ import axios from "axios";
 import { useAuthStore } from "../store/useAuthStore";
 
 const axiosInstance = axios.create({
-  // baseURL: import.meta.env.VITE_BACKEND_API,
   // baseURL: "http://localhost:5001/",
   baseURL: "https://johri-be.onrender.com/",
   withCredentials: true,
