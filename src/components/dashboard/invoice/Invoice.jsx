@@ -7,6 +7,7 @@ import InvoiceList from "./InvoiceList";
 const Invoice = () => {
   const [originalData] = useState(dummyInvoice); 
   const [filteredData, setFilteredData] = useState(dummyInvoice); 
+  const [showInvoice, setShowInvoice] = useState(false);
   // const [showModal, setShowModal] = useState(false);
   // const [isEditMode, setIsEditMode] = useState(false);
   
@@ -23,7 +24,7 @@ const Invoice = () => {
       <div className="h-[calc(100vh-100px)]">
       {/* <div className="flex-1 overflow-x-auto"> */}
 
-            <InvoiceList data={filteredData} />
+            <InvoiceList data={filteredData} setShowInvoice={setShowInvoice} showInvoice={showInvoice} />
 
       </div>
     </div>

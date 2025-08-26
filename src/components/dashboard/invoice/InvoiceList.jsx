@@ -2,13 +2,14 @@ import React from "react";
 import Pagination from "../../../utils/Pagination";
 import usePagination from "../../../utils/usePagination";
 import StatusView from "./utils/StatusView";
+import InvoiceDetailsModal from "./utils/InvoiceDetailsModal";
 import { useEffect, useRef } from "react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { GoDownload } from "react-icons/go";
 
 
 // function InvoiceList({ data, openProductModel}) {
-function InvoiceList({ data }) {
+function InvoiceList({ data, setShowInvoice, showInvoice }) {
   const tableRef = useRef(null);
 
   const {
@@ -34,6 +35,16 @@ function InvoiceList({ data }) {
           width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
         }}
       >
+
+
+        {showInvoice &&      
+          <InvoiceDetailsModal
+            onClose={() => setShowInvoice(false)}
+            // invoice={yourInvoiceObject}
+          />
+        }
+
+
         {/* Scroll container only for table */}
         <div
           className="max-h-[calc(100vh-280px)] overflow-auto border-gray-200 custom-scrollbar"
@@ -122,8 +133,11 @@ function InvoiceList({ data }) {
 
                   <td className="min-w-[150px] px-4 py-3 sticky right-0 bg-white text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
                    <div className="flex gap-5 items-center justify-center text-2xl">
-                    <MdOutlineRemoveRedEye className="cursor-pointer" />
-                    <GoDownload className="cursor-pointer" />
+                    <MdOutlineRemoveRedEye 
+                      className="cursor-pointer hover:text-blue-500" 
+                      onClick={() => setShowInvoice(true)}
+                    />
+                    <GoDownload className="cursor-pointer hover:text-green-500" />
                    </div>
                   </td>
                 </tr>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import PageNotFound from "./pages/PageNotFound";
 // import ProtectedRoute from "./utils/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
+import GoogleOAuthCallback from "./pages/GoogleOAuthCallback";
 
 
 
@@ -72,9 +73,9 @@ function App() {
 
 
   // Session initialize
-  useEffect(() => {
-  useAuthStore.getState().initializeSessionUser();
-}, []);
+//   useEffect(() => {
+//   useAuthStore.getState().initializeSessionUser();
+// }, []);
 
 
   useEffect(() => {
@@ -111,6 +112,11 @@ function App() {
         <Route
           path="/login"
           element={isMobile ? <LoginMobile /> : <LoginDesktop />}
+        />
+
+        <Route
+          path="/oauth-callback"
+          element={<GoogleOAuthCallback />}
         />
 
         <Route

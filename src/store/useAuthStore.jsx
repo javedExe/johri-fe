@@ -83,6 +83,18 @@ export const useAuthStore = create((set, get) => ({
 },
 
 
+  setGoogleAuthtoken: (token) => {
+
+    set({
+      user: null,
+      token,
+      isAdmin: true,
+    });
+
+    localStorage.setItem('token', token);
+
+  },
+
   setAuthEmail: (email) => {
     set({ authEmail: email });
     localStorage.setItem("resetEmail", email);
@@ -205,19 +217,25 @@ login: async (credentials) => {
       withCredentials: true,
     });
 
-    // After login, fetch session user
-    const sessionRes = await axios.get("/auth/session", {
-      withCredentials: true,
-    });
+    // console.log("Login Response: ",response);
 
-    const user = sessionRes.data.user;
+    const { token, user } = response.data;
+
+    // After login, fetch session user
+    // const sessionRes = await axios.get("/auth/session", {
+    //   withCredentials: true,
+    // });
+
+    // const user = sessionRes.data.user;
 
     // Save to store & localStorage if needed
     set({
       user,
+      token,
       isAdmin: user?.isAdmin || user?.role_id === 1,
     });
 
+    localStorage.setItem('token', token);
     localStorage.setItem("user", JSON.stringify(user));
 
     return { success: true };
@@ -240,7 +258,7 @@ login: async (credentials) => {
     set({ isLoggingIn: true });
     try {
       // const response = await axios.post("/admin/auth/google-login", {
-      const response = await axios.post("/auth/google", {
+      const response = await axios.get("/auth/google", {
         code,
       });
 
@@ -271,7 +289,7 @@ login: async (credentials) => {
     try {
       const response = await axios.post("/forgot-password/initiate", { identifier: email });
 
-      console.log("API response:", response.data);
+      // console.log("API response:", response.data);
       // console.log(response.status);
 
       // if (response.data.success) {
@@ -299,7 +317,7 @@ login: async (credentials) => {
         otp,
       });
 
-      console.log(response);
+      // console.log(response);
 
       // if (response.data.success) {
       if (response.status == 200) {
@@ -330,7 +348,7 @@ login: async (credentials) => {
         token
       });
 
-      console.log("auth: ", response);
+      // console.log("auth: ", response);
 
       // if (response.data.success) {
       if (response.status == 200) {
