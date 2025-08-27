@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PageNotFound from "./pages/PageNotFound";
 // import ProtectedRoute from "./utils/ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 import GoogleOAuthCallback from "./pages/GoogleOAuthCallback";
+import InactivityTimer from "./utils/InactivityTimer";
 
 
 
@@ -57,25 +58,23 @@ import User from "./components/dashboard/user/User";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
 
   const initializeFromStorage = useAuthStore(
     (state) => state.initializeFromStorage
   );
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isInitializing = useAuthStore((state) => state.isInitializing);
-
   const forceLogout = useAuthStore((state) => state.forceLogout);
-
+  const publicRoutes = ["/login", "/forgot-password", "/reset-password", "/verification", "/oauth-callback"];
+  const showInactivityTimer = isLoggedIn && !publicRoutes.includes(location.pathname);
+  
+  
   useEffect(() => {
     initializeFromStorage();
   }, []);
-
-
-  // Session initialize
-//   useEffect(() => {
-//   useAuthStore.getState().initializeSessionUser();
-// }, []);
 
 
   useEffect(() => {
@@ -86,13 +85,14 @@ function App() {
 
   useEffect(() => {
     if (forceLogout) {
-      // Reset the flag to prevent repeated redirects
       useAuthStore.setState({ forceLogout: false });
-
-      // Redirect to login
       navigate("/login", { replace: true });
     }
   }, [forceLogout, navigate]);
+
+  const handleLogout = () => {
+    useAuthStore.setState({ forceLogout: true });
+  };
 
   if (isInitializing) {
     return (
@@ -105,6 +105,9 @@ function App() {
 
   return (
     <div>
+
+      {/* <InactivityTimer onLogout={handleLogout} /> */}
+      {showInactivityTimer && <InactivityTimer onLogout={handleLogout} />}
 
       {/* Admin (Spuer user) Route Start */}
 

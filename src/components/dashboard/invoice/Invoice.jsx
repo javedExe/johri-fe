@@ -1,15 +1,35 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { dummyInvoice } from "../dummy";
 import InvoiceFilters from "./InvoiceFilters";
 import InvoiceList from "./InvoiceList";
+import axios from "../../../utils/axiosInstance";
 
 
 const Invoice = () => {
-  const [originalData] = useState(dummyInvoice); 
+  const [originalData, setOriginalData] = useState([]); 
   const [filteredData, setFilteredData] = useState(dummyInvoice); 
   const [showInvoice, setShowInvoice] = useState(false);
   // const [showModal, setShowModal] = useState(false);
   // const [isEditMode, setIsEditMode] = useState(false);
+
+    const fetchInvoiceList = async ()=>{
+          const response = await axios.get("/api/invoices", {
+            withCredentials: true,
+          });
+
+          console.log(response.data);
+
+          setOriginalData(response.data.invoices.data);   
+  }
+
+    useEffect(()=>{
+      fetchInvoiceList();
+    },[]);
+  
+  
+    useEffect(()=>{
+     setFilteredData(originalData);
+    },[originalData]);
   
   
   return (

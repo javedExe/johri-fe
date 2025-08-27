@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Pagination from "../../../utils/Pagination";
 import usePagination from "../../../utils/usePagination";
 import StatusView from "./utils/StatusView";
@@ -11,6 +11,7 @@ import { GoDownload } from "react-icons/go";
 // function InvoiceList({ data, openProductModel}) {
 function InvoiceList({ data, setShowInvoice, showInvoice }) {
   const tableRef = useRef(null);
+  const [invoiceItem, setInvoiceItem] = useState(null);
 
   const {
     paginatedData,
@@ -27,6 +28,11 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
     }
   }, [currentPage]);
 
+  let handleInvoiceItem = (id) =>{
+    setInvoiceItem(id)
+    setShowInvoice(true)
+  }
+
   return (
     <>
       <div
@@ -40,7 +46,7 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
         {showInvoice &&      
           <InvoiceDetailsModal
             onClose={() => setShowInvoice(false)}
-            // invoice={yourInvoiceObject}
+            invoice={invoiceItem}
           />
         }
 
@@ -69,7 +75,7 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
                   <div className="flex items-center gap-1">Order Type</div>
                 </th>
                 <th className="min-w-[150px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  Sellet Type
+                  Seller Type
                 </th>
                 <th className="min-w-[200px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
                   <div className="flex items-center gap-1">Seller Name</div>
@@ -94,7 +100,15 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
             </thead>
 
             <tbody>
-              {paginatedData.map((row, index) => (
+
+              {paginatedData.length <= 0 && (
+                <tr>
+                  <td>Loading...</td>
+                </tr>
+              )}
+
+              {paginatedData.length > 0 &&
+                paginatedData.map((row, index) => (
                 <tr
                   key={index}
                   className="border-b border-gray-200 hover:bg-gray-50 group"
@@ -106,36 +120,36 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
                     />
                   </td>
                   <td className="min-w-[260px] px-4 py-3 text-[#101828] font-inter font-medium text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.transactionId} <br />{" "}
+                    {row.transaction_id} <br />{" "}
                     <span className="text-[#817e7e] text-xs">{row.type}</span>
                   </td>
                   <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.orderType}
+                    {row.order_type}
                   </td>
                   <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.sellerType}
+                    {row.seller_type}
                   </td>
                   <td className="min-w-[200px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
-                    {row.sellerName}
+                    {row.seller_name}
                   </td>
                   <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.dateTime}
+                    {row.invoice_date}
                   </td>
 
                   <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap text-center">
-                    ₹ {row.amount}
-                  </td>
+                    ₹ {row.total}
+                  </td> 
 
                   <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
                     {/* {row.status} */}
-                    <StatusView value={row.status} />
+                    <StatusView value={row.payment_status} />
                   </td>
 
                   <td className="min-w-[150px] px-4 py-3 sticky right-0 bg-white text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
                    <div className="flex gap-5 items-center justify-center text-2xl">
                     <MdOutlineRemoveRedEye 
                       className="cursor-pointer hover:text-blue-500" 
-                      onClick={() => setShowInvoice(true)}
+                      onClick={() => handleInvoiceItem(row.id)}
                     />
                     <GoDownload className="cursor-pointer hover:text-green-500" />
                    </div>

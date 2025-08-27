@@ -6,25 +6,24 @@ const GoogleOAuthCallback = () => {
   const navigate = useNavigate();
   const setGoogleAuthtoken = useAuthStore((state) => state.setGoogleAuthtoken);
 
-    useEffect(() => {
-  const hash = window.location.hash;
-  const params = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
-  const token = params.get("token");
+  useEffect(() => {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(
+      hash.startsWith("#") ? hash.slice(1) : hash
+    );
+    const token = params.get("token");
 
-  if (token) {
-    localStorage.setItem("token", token);
+    if (token) {
+      localStorage.setItem("token", token);
 
-    setGoogleAuthtoken(token);
+      setGoogleAuthtoken(token);
 
-
-    navigate("/admin/dashboard");
-
-  } else {
-    console.log("error: /login")
-    navigate("/login");
-  }
-}, []);
-
+      navigate("/admin/dashboard");
+    } else {
+      console.log("error: /login");
+      navigate("/login");
+    }
+  }, []);
 
   return <p>Logging you in...</p>;
 };

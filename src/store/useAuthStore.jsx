@@ -13,6 +13,7 @@ export const useAuthStore = create((set, get) => ({
   isAdmin: false,
 
   isLoggingIn: false,
+  isLoggedIn: false,
   isSendingOTP: false,
   isVerifyingOTP: false,
   otpVerified: false,
@@ -35,6 +36,7 @@ export const useAuthStore = create((set, get) => ({
           user,
           isAdmin: user?.isAdmin || false,
           isInitializing: false,
+          // isLoggedIn: true,
           forceLogout: false, // reset on init
         });
       } else {
@@ -43,6 +45,7 @@ export const useAuthStore = create((set, get) => ({
           user: null,
           isAdmin: false,
           isInitializing: false,
+          isLoggedIn: false,
           forceLogout: false,
         });
       }
@@ -51,6 +54,7 @@ export const useAuthStore = create((set, get) => ({
       set({
         token: null,
         user: null,
+        isLoggedIn: false,
         isAdmin: false,
         isInitializing: false,
         forceLogout: false,
@@ -68,6 +72,7 @@ export const useAuthStore = create((set, get) => ({
     set({
       user,
       isAdmin: user?.isAdmin || user?.role_id === 1,
+      isLoggedIn: true,
       isInitializing: false,
       isSessionLoading: false,
     });
@@ -76,6 +81,7 @@ export const useAuthStore = create((set, get) => ({
     set({
       user: null,
       isAdmin: false,
+      isLoggedIn: false,
       isInitializing: false,
       isSessionLoading: false,
     });
@@ -89,6 +95,7 @@ export const useAuthStore = create((set, get) => ({
       user: null,
       token,
       isAdmin: true,
+      isLoggedIn: true,
     });
 
     localStorage.setItem('token', token);
@@ -171,44 +178,6 @@ export const useAuthStore = create((set, get) => ({
   },
 
 
-  // login: async (credentials) => {
-  //   set({ isLoggingIn: true });
-
-  //   try {
-  //     // const response = await axios.post("/admin/auth/login", credentials);
-
-      
-  //     // if(credentials.username == "javedansari@e-sutra.com" && credentials.password == "@Javed1234"){
-  //     //   console.log("Cred: ", credentials);
-  //     //   return { test: true }; 
-        
-  //     // }
-
-  //     const response = await axios.post("/auth/login", credentials);
-
-  //     const { user, token } = response.data;
-  //     // Store in Zustand
-  //     set({
-  //       user,
-  //       token,
-  //       isAdmin: user?.isAdmin || false,
-  //     });
-
-  //     // Store in localStorage
-  //     localStorage.setItem("user", JSON.stringify(user));
-  //     localStorage.setItem("token", token);
-  //     return { success: true, response };
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     set({ user: null, isAdmin: false });
-  //     const message = error?.response?.data?.message || "Login failed";
-  //     return { success: false, message };
-  //   } finally {
-  //     set({ isLoggingIn: false });
-  //   }
-  // },
-
 login: async (credentials) => {
   set({ isLoggingIn: true });
 
@@ -217,22 +186,13 @@ login: async (credentials) => {
       withCredentials: true,
     });
 
-    // console.log("Login Response: ",response);
-
     const { token, user } = response.data;
-
-    // After login, fetch session user
-    // const sessionRes = await axios.get("/auth/session", {
-    //   withCredentials: true,
-    // });
-
-    // const user = sessionRes.data.user;
-
-    // Save to store & localStorage if needed
+    
     set({
       user,
       token,
       isAdmin: user?.isAdmin || user?.role_id === 1,
+      isLoggedIn: true,
     });
 
     localStorage.setItem('token', token);
@@ -241,7 +201,7 @@ login: async (credentials) => {
     return { success: true };
   } catch (error) {
     console.error("Login failed:", error);
-    set({ user: null, isAdmin: false });
+    set({ user: null, isAdmin: false, isLoggedIn: false });
     return {
       success: false,
       message: error?.response?.data?.message || "Login failed",
@@ -267,13 +227,14 @@ login: async (credentials) => {
         user,
         token,
         isAdmin: user?.isAdmin || false,
+        isLoggedIn: true,
       });
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
       console.log("Login successful");
       return response.data;
     } catch (error) {
-      set({ user: null, isAdmin: false });
+      set({ user: null, isAdmin: false, isLoggedIn: false });
       const message = error?.response?.data?.message || "Google Login failed";
       return { success: false, message };
     } finally {
@@ -378,6 +339,7 @@ login: async (credentials) => {
       authEmail: null,
       authFlowStep: null,
       isLoggingIn: false,
+      isLoggedIn: false,
       isSendingOTP: false,
       isVerifyingOTP: false,
       otpVerified: false,
