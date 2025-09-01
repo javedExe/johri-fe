@@ -141,7 +141,7 @@ const LoginDesktop = () => {
             )}
 
             <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   type="checkbox"
                   name="rememberMe"
@@ -155,7 +155,7 @@ const LoginDesktop = () => {
                 >
                   Remember me
                 </label>
-              </div>
+              </div> */}
               <div>
                 <Link
                   to="/forgot-password"

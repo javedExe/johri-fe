@@ -71,9 +71,19 @@ function App() {
   const publicRoutes = ["/login", "/forgot-password", "/reset-password", "/verification", "/oauth-callback"];
   const showInactivityTimer = isLoggedIn && !publicRoutes.includes(location.pathname);
   
+
+  const loggedIn = async () => {
+    const response = await useAuthStore.getState().fetchSessionUser();
+
+    if(response.success === true){
+      navigate("/admin/dashboard", { replace: true })
+    }
+
+  }
   
   useEffect(() => {
     initializeFromStorage();
+    loggedIn();
   }, []);
 
 
