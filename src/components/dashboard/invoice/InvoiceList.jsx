@@ -6,12 +6,11 @@ import InvoiceDetailsModal from "./utils/InvoiceDetailsModal";
 import { useEffect, useRef } from "react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { GoDownload } from "react-icons/go";
+import axios from "../../../utils/axiosInstance";
 
-
-// function InvoiceList({ data, openProductModel}) {
-function InvoiceList({ data, setShowInvoice, showInvoice }) {
+function InvoiceList({ data, setShowInvoice, showInvoice, isFilterActive }) {
   const tableRef = useRef(null);
-  const [invoiceItem, setInvoiceItem] = useState(null);
+  const [invoiceId, setInvoiceId] = useState(null);
 
   const {
     paginatedData,
@@ -28,10 +27,45 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
     }
   }, [currentPage]);
 
-  let handleInvoiceItem = (id) =>{
-    setInvoiceItem(id)
-    setShowInvoice(true)
+  let handleInvoiceItem = (id) => {
+    setInvoiceId(id);
+    setShowInvoice(true);
+  };
+
+const downloadInvoice = async (invoiceId) => {
+  try {
+    const response = await axios.get(`/api/invoices/${invoiceId}/download`, {
+      withCredentials: true,
+      responseType: 'blob',
+    });
+
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    const url = window.URL.createObjectURL(blob);
+
+    const disposition = response.headers['content-disposition'];
+    let filename = `invoice_${invoiceId}.pdf`;
+
+    if (disposition && disposition.indexOf('filename=') !== -1) {
+      const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+      if (filenameMatch && filenameMatch.length > 1) {
+        filename = filenameMatch[1];
+      }
+    }
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download error:', error);
+    alert('Failed to download invoice. Please try again.');
   }
+};
+
 
   return (
     <>
@@ -41,15 +75,13 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
           width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
         }}
       >
-
-
-        {showInvoice &&      
+        {showInvoice && (
           <InvoiceDetailsModal
             onClose={() => setShowInvoice(false)}
-            invoice={invoiceItem}
+            invoiceId={invoiceId}
+            downloadInvoice={(id) => downloadInvoice(id)}
           />
-        }
-
+        )}
 
         {/* Scroll container only for table */}
         <div
@@ -68,7 +100,6 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
                 <th className="min-w-[260px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
                   <div className="flex items-center gap-1">
                     Transaction ID
-                    {/* <MdArrowDownward className="w-4 h-4 text-gray-500" /> */}
                   </div>
                 </th>
                 <th className="min-w-[150px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
@@ -100,8 +131,7 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
             </thead>
 
             <tbody>
-
-              {paginatedData.length <= 0 && (
+              {!isFilterActive && paginatedData.length <= 0 && (
                 <tr>
                   <td>Loading...</td>
                 </tr>
@@ -109,53 +139,55 @@ function InvoiceList({ data, setShowInvoice, showInvoice }) {
 
               {paginatedData.length > 0 &&
                 paginatedData.map((row, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 hover:bg-gray-50 group"
-                >
-                  <td className="w-12 px-2 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 accent-purple-500"
-                    />
-                  </td>
-                  <td className="min-w-[260px] px-4 py-3 text-[#101828] font-inter font-medium text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.transaction_id} <br />{" "}
-                    <span className="text-[#817e7e] text-xs">{row.type}</span>
-                  </td>
-                  <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.order_type}
-                  </td>
-                  <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.seller_type}
-                  </td>
-                  <td className="min-w-[200px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
-                    {row.seller_name}
-                  </td>
-                  <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.invoice_date}
-                  </td>
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 hover:bg-gray-50 group"
+                  >
+                    <td className="w-12 px-2 py-3 text-center">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 accent-purple-500"
+                      />
+                    </td>
+                    <td className="min-w-[260px] px-4 py-3 text-[#101828] font-inter font-medium text-sm leading-5 tracking-normal whitespace-nowrap">
+                      {row.transaction_id} <br />{" "}
+                      <span className="text-[#817e7e] text-xs">{row.type}</span>
+                    </td>
+                    <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
+                      {row.order_type}
+                    </td>
+                    <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
+                      {row.seller_type}
+                    </td>
+                    <td className="min-w-[200px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
+                      {row.seller_name}
+                    </td>
+                    <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
+                      {row.invoice_date}
+                    </td>
 
-                  <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap text-center">
-                    ₹ {row.total}
-                  </td> 
+                    <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap text-center">
+                      ₹ {row.total}
+                    </td>
 
-                  <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
-                    {/* {row.status} */}
-                    <StatusView value={row.payment_status} />
-                  </td>
+                    <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
+                      <StatusView value={row.payment_status} />
+                    </td>
 
-                  <td className="min-w-[150px] px-4 py-3 sticky right-0 bg-white text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                   <div className="flex gap-5 items-center justify-center text-2xl">
-                    <MdOutlineRemoveRedEye 
-                      className="cursor-pointer hover:text-blue-500" 
-                      onClick={() => handleInvoiceItem(row.id)}
-                    />
-                    <GoDownload className="cursor-pointer hover:text-green-500" />
-                   </div>
-                  </td>
-                </tr>
-              ))}
+                    <td className="min-w-[150px] px-4 py-3 sticky right-0 bg-white text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
+                      <div className="flex gap-5 items-center justify-center text-2xl">
+                        <MdOutlineRemoveRedEye
+                          className="cursor-pointer hover:text-blue-500"
+                          onClick={() => handleInvoiceItem(row.id)}
+                        />
+                        <GoDownload
+                          onClick={() => downloadInvoice(row.id)}
+                          className="cursor-pointer hover:text-green-500"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

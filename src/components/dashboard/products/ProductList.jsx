@@ -1,4 +1,6 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import axios from "../../../utils/axiosInstance";
+import Switch from "../../ui/Switch";
 import { MdArrowDownward } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
 import { FiTrash } from "react-icons/fi";
@@ -16,9 +18,14 @@ import ringProduct from "../../../assets/ringProduct.png";
 import solidLocketProduct from "../../../assets/solidLocketProduct.png";
 import sharpLocketProduct from "../../../assets/sharpLocketProduct.png";
 
-function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
-  setEditMode, openProductModel }) {
-
+function ProductList({
+  data,
+  closeProductModel,
+  productModelVisible,
+  isEditMode,
+  setEditMode,
+  openProductModel,
+}) {
   const tableRef = useRef(null);
   const [formData, setFormData] = useState({});
 
@@ -29,7 +36,6 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
     handlePageChange,
     // totalPages,
   } = usePagination(data, 1, 10);
-  
 
   // Scroll to top of table on page change
   useEffect(() => {
@@ -38,29 +44,54 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
     }
   }, [currentPage]);
 
-
-
-   const handleEdit = (value) => {
+  const handleEdit = (value) => {
     console.log(value);
     setEditMode();
     setFormData(value);
     openProductModel();
   };
 
+  const handleStatus = async (id, status) => {
+    const response = await axios.patch(`/admin/products/${id}`, {
+      status: status,
+    });
+
+    if (response.data.success) {
+      alert("Product Status update successfully.");
+    } else {
+      alert(
+        "Failed to save product: " + (response.data.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleAvailability = async (id, availability) => {
+    const value = availability ? "In Stock" : "Out of Stock";
+    alert(value);
+
+    const response = await axios.patch(`/admin/products/${id}`, {
+      availability: value,
+    });
+
+    if (response.data.success) {
+      alert("Product Status update successfully.");
+    } else {
+      alert(
+        "Failed to save product: " + (response.data.message || "Unknown error")
+      );
+    }
+  };
+
   return (
     <>
-<div
-  className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-full sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap lg:w-[calc(100%-297px)] z-30"
->
-
-        {productModelVisible && 
-        <AddProduct 
-          onClose={closeProductModel}
-          prevData={formData}
-          isEditMode={isEditMode}
-        />
-        
-        }
+      <div className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-full sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap lg:w-[calc(100%-297px)] z-30">
+        {productModelVisible && (
+          <AddProduct
+            onClose={closeProductModel}
+            prevData={formData}
+            isEditMode={isEditMode}
+          />
+        )}
 
         {/* Scroll container only for table */}
         <div
@@ -162,10 +193,10 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
                     </div>
                   </td>
                   <td className="min-w-[100px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.sellerName}
+                    {row.seller_name}
                   </td>
                   <td className="min-w-[100px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.usedBy}
+                    {row.used_by}
                   </td>
                   <td className="min-w-[200px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
                     {row.materials.map((materialName, index) => (
@@ -176,7 +207,7 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
                     {row.weight}
                   </td>
                   <td className="min-w-[210px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                    {row.category}
+                    {`${row.category} > ${row.subcategory}`}
                   </td>
                   <td className="min-w-[90px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
                     {row.price}
@@ -186,13 +217,13 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
                   </td>
                   <td className="min-w-[180px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
                     {/* <StatusTag role={row.availability} /> */}
-                    {row.availability === "Out of Stock" ? (
-                      <span className="text-red-500 text-sm border-1 p-1 px-2 rounded-2xl">
-                        Out of Stock
-                      </span>
-                    ) : (
+                    {row.availability ? (
                       <span className="text-[#52C41A] text-sm border-1 p-1 px-2 rounded-2xl">
                         In Stock
+                      </span>
+                    ) : (
+                      <span className="text-red-500 text-sm border-1 p-1 px-2 rounded-2xl">
+                        Out of Stock
                       </span>
                     )}
                   </td>
@@ -200,24 +231,37 @@ function ProductList({ data, closeProductModel, productModelVisible, isEditMode,
                     className="min-w-[100px] px-8 py-3 sticky right-0 bg-white border-b-[#EAECF0] flex items-center justify-between gap-2 group-hover:bg-gray-50"
                     style={{ zIndex: 10 }}
                   >
-                    {row.action === "Approved" && (
+                    {row.status === "approved" && (
                       <div className="flex gap-2">
-                        <AiOutlineEdit className="text-gray-600  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
-                        onClick={() => handleEdit(row)}
+                        <AiOutlineEdit
+                          className="text-gray-600  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
+                          onClick={() => handleEdit(row)}
                         />
 
-                        <IoToggle className="w-7 h-7 text-[#1677FF] cursor-pointer" />
+                        <Switch
+                          checked={row.availability}
+                          onClick={() =>
+                            handleAvailability(row.id, !row.availability)
+                          }
+                          className="w-4 h-5 text-[#1677FF] cursor-pointer"
+                        />
                       </div>
                     )}
-                    {row.action === "Rejected" && (
+                    {row.status === "rejected" && (
                       <div className="w-full flex justify-end">
                         <IoCloseCircleOutline className="text-red-400  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
                       </div>
                     )}
-                    {row.action === "Pending" && (
+                    {row.status === "pending" && (
                       <div className="flex gap-3">
-                        <IoCloseCircleOutline className="text-red-400  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
-                        <IoIosCheckmarkCircleOutline className="text-green-400  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
+                        <IoCloseCircleOutline
+                          onClick={() => handleStatus(row.id, "rejected")}
+                          className="text-red-400  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
+                        />
+                        <IoIosCheckmarkCircleOutline
+                          onClick={() => handleStatus(row.id, "approved")}
+                          className="text-green-400  cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
+                        />
                       </div>
                     )}
                   </td>

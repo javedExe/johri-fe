@@ -9,9 +9,17 @@ import ringProduct from "../../../assets/ringProduct.png";
 import solidLocketProduct from "../../../assets/solidLocketProduct.png";
 import sharpLocketProduct from "../../../assets/sharpLocketProduct.png";
 
-function ProductCard({ data, closeProductModel, productModelVisible }) {
+function ProductCard({
+  data,
+  closeProductModel,
+  productModelVisible,
+  isEditMode,
+  setEditMode,
+  openProductModel,
+}) {
   const tableRef = useRef(null);
   const [menuIndex, setMenuIndex] = useState(null);
+  const [formData, setFormData] = useState({});
 
   const {
     paginatedData,
@@ -28,8 +36,13 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
     }
   }, [currentPage]);
 
+  const handleEdit = (value) => {
+    setEditMode();
+    setFormData(value);
+    openProductModel();
+  };
+
   return (
-    
     <>
       <div
         className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap z-30"
@@ -37,6 +50,14 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
           width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
         }}
       >
+        {productModelVisible && (
+          <AddProduct
+            onClose={closeProductModel}
+            prevData={formData}
+            isEditMode={isEditMode}
+          />
+        )}
+
         {/* Scroll container only for table */}
         <div
           className="max-h-[calc(100vh-280px)] overflow-auto border-gray-200 custom-scrollbar"
@@ -44,8 +65,6 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
         >
           {/* Here */}
           <div className="flex flex-wrap gap-4">
-            {productModelVisible && <AddProduct onClose={closeProductModel} />}
-
             {paginatedData.map((row, index) => (
               <div
                 key={index}
@@ -55,15 +74,16 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
                 <div
                   className="relative h-38 rounded-md bg-cover bg-center"
                   // style={{ backgroundImage: `url(${adminProductImg})` }}
-                  style={{ backgroundImage: `url(${
-                    row.action === "Approved"
+                  style={{
+                    backgroundImage: `url(${
+                      row.status === "approved"
                         ? ringProduct
-                        : row.action === "Rejected"
+                        : row.status === "rejected"
                         ? solidLocketProduct
                         : sharpLocketProduct
-                    })` }}
+                    })`,
+                  }}
                 >
-
                   {/* Dots Menu */}
                   <div className="absolute top-2 right-2">
                     <button
@@ -77,7 +97,10 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
 
                     {menuIndex === index && (
                       <div className="absolute right-0 w-24 bg-white shadow rounded-md z-10">
-                        <button className="block w-full text-left px-3 py-1 text-sm hover:bg-gray-300">
+                        <button
+                          onClick={() => handleEdit(row)}
+                          className="block w-full text-left px-3 py-1 text-sm hover:bg-gray-300"
+                        >
                           Edit
                         </button>
                         <button className="block w-full text-left px-3 py-1 text-sm hover:bg-gray-300">
@@ -97,12 +120,12 @@ function ProductCard({ data, closeProductModel, productModelVisible }) {
                     <p className="text-sm font-semibold">{row.price}</p>
                     <span
                       className={`inline-block px-2 py-0.5 text-xs rounded-full border ${
-                        row.availability === "In Stock"
+                        row.availability
                           ? "text-green-500 border-green-500"
                           : "text-red-500 border-red-500"
                       }`}
                     >
-                      {row.availability}
+                      {row.availability ? "In Stock" : "Out of Stock"}
                     </span>
                   </div>
                 </div>

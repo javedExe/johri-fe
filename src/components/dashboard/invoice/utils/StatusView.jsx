@@ -1,6 +1,6 @@
 import React from "react";
 
-function StatusView({value}) {
+function StatusView({value, className}) {
 
     let colorList;
 
@@ -18,8 +18,8 @@ function StatusView({value}) {
     }
 
   return (
-    <div>
-      {<span className={`px-2 py-0.5 rounded-lg border text-sm font-medium ${colorList}`}>
+    <div className={className}>
+      {<span className={`px-2 py-0.5 rounded-lg border text-sm font-medium ${colorList}`} >
         {value}
       </span>}
     </div>

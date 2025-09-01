@@ -6,7 +6,14 @@ import { AiOutlineLayout } from "react-icons/ai";
 import { AiOutlineAppstore } from "react-icons/ai";
 // import dummyData from "../dummy";
 
-const ProductFilters = ({ data, setData, setView, getView, addProductModel }) => {
+const ProductFilters = ({
+  data,
+  setData,
+  setView,
+  getView,
+  addProductModel,
+  setEditMode,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
@@ -15,7 +22,14 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
   const inputRef = useRef(null);
 
   const handleAvailability = (e) => {
-    const availability = e.target.value;
+    let availability = e.target.value;
+    if (availability === "In Stock") {
+      availability = true;
+    } else if (availability === "Out of Stock") {
+      availability = false;
+    } else {
+      availability = "";
+    }
     setSelectedRole(availability);
     filterData(searchValue, availability, selectedStatus, selectedMaterial);
   };
@@ -52,21 +66,25 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
         (j) =>
           j.name.toLowerCase().includes(lowerSearch) ||
           j.sku.toLowerCase().includes(lowerSearch) ||
-          j.sellerName.toLowerCase().includes(lowerSearch) ||
+          j.seller_name.toLowerCase().includes(lowerSearch) ||
           j.weight.toLowerCase().includes(lowerSearch) ||
           j.price.toLowerCase().includes(lowerSearch)
       );
     }
-    if (availability) filtered = filtered.filter((j) => j.availability === availability);
-    if (action) filtered = filtered.filter((j) => j.action === action);
+    if (availability !== "" && availability !== undefined)
+      filtered = filtered.filter((j) => j.availability === availability);
+    if (action) filtered = filtered.filter((j) => j.status === action);
     if (material) {
       filtered = filtered.filter((j) => j.materials.includes(material));
     }
     setData(filtered);
 
-
     // setData(filtered);
+  };
 
+  const handleAddProduct = () => {
+    setEditMode();
+    addProductModel();
   };
 
   return (
@@ -79,7 +97,7 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
       {/* Search */}
       <div className="flex items-center w-full sm:w-auto sm:flex-1">
         <div
-          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out px-2 cursor-pointer ${
+          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out ps-2 cursor-pointer ${
             isExpanded ? "w-full sm:w-65 rounded-md" : "w-[42px]"
           } h-[32px]`}
           onClick={() => {
@@ -105,7 +123,6 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
 
       {/* Filters Section */}
       <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end">
-
         {/* Availability Filter */}
         <div className="relative w-full sm:w-[128px] transition-all duration-300">
           <select
@@ -138,7 +155,7 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
             <span className="block w-2 h-2 border-t-2 border-r-2 border-gray-600 transform rotate-135"></span>
           </div>
         </div>
-        
+
         {/* Action Filter */}
         <div className="relative w-full sm:w-[128px] transition-all duration-300">
           <select
@@ -146,9 +163,9 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
             onChange={handleActionFilter}
           >
             <option value="">Action</option>
-            <option value="Approved">Approved</option>
-            <option value="Pending">Pending</option>
-            <option value="Rejected">Rejected</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
             <span className="block w-2 h-2 border-t-2 border-r-2 border-gray-600 transform rotate-135"></span>
@@ -159,18 +176,24 @@ const ProductFilters = ({ data, setData, setView, getView, addProductModel }) =>
       {/* Buttons Section */}
       <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300  ">
         {/* Export Button */}
-        <button className="group flex items-center justify-around gap-1 w-full sm:w-[92px] h-[32px] rounded-[6px] px-[12px] bg-white border border-[#D9D9D9] transition-transform transform hover:scale-105 "
-        onClick={setView}
+        <button
+          className="group flex items-center justify-around gap-1 w-full sm:w-[92px] h-[32px] rounded-[6px] px-[12px] bg-white border border-[#D9D9D9] transition-transform transform hover:scale-105 "
+          onClick={setView}
         >
           {/* <CiExport className="w-[16px] h-[16px] rotate-90 " />
           <span className="text-[14px] text-black/70 ">Export</span> */}
-          <AiOutlineLayout className={`w-[22px] h-[22px] ${getView? "" : "text-[#C2ADEB]"}`} />
-          <AiOutlineAppstore className={`w-[22px] h-[22px] ${getView? "text-[#C2ADEB]" : ""}`}  />
+          <AiOutlineLayout
+            className={`w-[22px] h-[22px] ${getView ? "" : "text-[#C2ADEB]"}`}
+          />
+          <AiOutlineAppstore
+            className={`w-[22px] h-[22px] ${getView ? "text-[#C2ADEB]" : ""}`}
+          />
         </button>
 
         {/* Add Product Button */}
-        <button className="group flex items-center justify-center gap-2 w-full sm:w-[130px] h-[32px] rounded-[6px] px-[12px] bg-[#EDDD8A] border border-[#DDBF22] transition-transform transform hover:scale-105"
-        onClick={addProductModel}
+        <button
+          className="group flex items-center justify-center gap-2 w-full sm:w-[130px] h-[32px] rounded-[6px] px-[12px] bg-[#EDDD8A] border border-[#DDBF22] transition-transform transform hover:scale-105"
+          onClick={handleAddProduct}
         >
           <IoAdd className="w-[16px] h-[16px]" />
           <span className="text-[14px] font-normal text-[#2C2607]">

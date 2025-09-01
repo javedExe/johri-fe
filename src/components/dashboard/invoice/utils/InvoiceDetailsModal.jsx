@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../../utils/axiosInstance";
+import StatusView from "./StatusView";
 
 function InvoiceDetailsModal({
   onClose,
   invoiceId,
-  onDownloadPDF = () => alert("Download PDF not implemented"),
+  downloadInvoice
 }) {
   const [invoice, setInvoice] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,11 +24,11 @@ function InvoiceDetailsModal({
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchInvoiceList();
   }, [invoiceId]);
 
-  console.log("Invoice: ", invoice);
 
   if (loading) {
     return (
@@ -41,7 +42,7 @@ function InvoiceDetailsModal({
     );
   }
 
-  if (!invoice) {
+  if (invoice) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
         <div className="bg-white rounded-lg w-[630px] p-6 relative overflow-y-auto max-h-[98vh]">
@@ -99,9 +100,7 @@ function InvoiceDetailsModal({
               <div className="mt-2">
                 <span className="font-medium">Payment Status:</span>
                 <span className="ml-1">
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">
-                    {invoice.payment_status}
-                  </span>
+                    <StatusView value={invoice.payment_status} className="inline-block ms-2" />
                 </span>
               </div>
             </div>
@@ -125,8 +124,8 @@ function InvoiceDetailsModal({
                     <tr key={idx} className="">
                       <td className="py-1">{item.description}</td>
                       <td className="py-1 text-center pe-4">{item.quantity}</td>
-                      <td className="py-1">${item.unit_price.toFixed(2)}</td>
-                      <td className="py-1">${item.total.toFixed(2)}</td>
+                      <td className="py-1">${item.unit_price}</td>
+                      <td className="py-1">${item.total}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -139,17 +138,17 @@ function InvoiceDetailsModal({
             <div className="flex w-64 justify-between py-0.5">
               <span className="text-[#666666]">Subtotal:</span>
               <span className="text-[#666666]">
-                ${invoice.subtotal.toFixed(2)}
+                ${invoice.subtotal}
               </span>
             </div>
             <div className="flex w-64 justify-between py-0.5">
               <span className="text-[#666666]">Tax (5%):</span>
               {/* Need to implement tax Logic */}
-              <span className="text-[#666666]">${invoice.tax.toFixed(2)}</span>
+              <span className="text-[#666666]">${invoice.tax}</span>
             </div>
             <div className="flex w-64 justify-between font-semibold py-1">
               <span className="">Total Amount:</span>
-              <span className="text-lg">${invoice.total.toFixed(2)}</span>
+              <span className="text-lg">${invoice.total}</span>
             </div>
           </div>
 
@@ -163,8 +162,7 @@ function InvoiceDetailsModal({
             </button>
             <button
               className="w-full bg-[#1C1C3A] text-white rounded px-4 py-2 text-sm font-semibold"
-              onClick={onDownloadPDF}
-              // you can also use: onClick={() => window.open(invoice.pdfUrl, "_blank")}
+              onClick={() => downloadInvoice(invoiceId)}
             >
               Download PDF
             </button>
