@@ -14,7 +14,7 @@ const LoginMobile = () => {
 
   const { validateForm, login } = useAuthStore();
 
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "", role: "admin", });
   const [errors, setErrors] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -130,7 +130,7 @@ const LoginMobile = () => {
             )}
             
           <div className="flex justify-between items-center mb-4">
-{/*             <div className="flex items-center">
+            {/* <div className="flex items-center">
               <input
                 type="checkbox"
                 // className="h-4 w-4 text-purple-500 focus:ring-purple-500 border-gray-300 rounded cursor-pointer"
