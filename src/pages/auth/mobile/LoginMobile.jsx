@@ -112,9 +112,9 @@ const LoginMobile = () => {
               onClick={() => setPasswordVisible(!passwordVisible)}
             >
               {passwordVisible ? (
-                <FiEyeOff className="w-3.5 h-3.5" />
-              ) : (
                 <FiEye className="w-3.5 h-3.5" />
+              ) : (
+                <FiEyeOff className="w-3.5 h-3.5" />
               )}
             </span>
 
