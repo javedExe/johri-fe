@@ -5,7 +5,14 @@ import Sidebar from "../../../components/dashboard/Sidebar";
 
 const DashboardDesktop = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getActiveLink = () => {
     const pathParts = location.pathname.split("/");
@@ -21,33 +28,56 @@ const DashboardDesktop = () => {
       : getActiveLink().replace(/-/g, " ");
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <Sidebar />
 
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Topbar, Breadcrumbs, Routes etc */}
-        
-        <div className="w-full sticky top-0 ">
-          <Topbar />
-        </div>
 
-        {/* Breadcrumb */}
-        {/* <div className="px-4 mt-0 text-[14px] md:fixed md:top-[78px] md:left-[297px] md:h-[48px] md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-10"> */}
+  //   <div className="flex min-h-screen">
 
-        {/* <div className="z-50">
-          <p className="text-black/70">Dashboard / {" "}
-                    <span className="font-bold leading-[28px] text-[#000000E0] font-inter">
-            {activeLink}
-          </span>
-          </p>
-        </div> */}
-        <Outlet />
-      </main>
+  //   {/* Sidebar */}
+  //   <div className="w-0 lg:w-[297px] h-screen overflow-y-auto flex-shrink-0">
+  //     <Sidebar />
+  //   </div>
+
+  //   {/* Main Content */}
+  //   <main className="flex-1 flex flex-col w-full overflow-x-auto">
+  //     {/* Topbar */}
+  //     <div className="bg-white w-full  z-30">
+  //       <Topbar />
+  //     </div>
+
+  //     {/* Breadcrumb */}
+  //     {/* <div className="px-6 py-2">
+  //       <p className="text-black/70">Dashboard / <span className="font-bold">{activeLink}</span></p>
+  //     </div> */}
+
+  //     {/* Main Routed Content */}
+  //     <div className="flex-1 p-6">
+  //       <Outlet />
+  //     </div>
+  //   </main>
+
+  // </div>
+
+  
+<div className="flex min-h-screen">
+  {/* Sidebar */}
+  <div className="w-0 lg:w-[297px] h-screen flex-shrink-0 ">
+    <Sidebar />
+  </div>
+
+  {/* Main Content */}
+  <div className="flex-1 flex flex-col min-w-0 relative">
+    {/* Sticky Topbar */}
+    <div className="sticky top-0 z-30 bg-white inset-x-0">
+      <Topbar />
     </div>
 
-
+    {/* Main Routed Content */}
+    <main className="flex-1 overflow-y-auto p-6">
+      <Outlet />
+    </main>
+  </div>
+</div>
+  
   );
 };
 

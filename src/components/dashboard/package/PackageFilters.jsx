@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { IoAdd } from "react-icons/io5";
+import { BsPeople } from "react-icons/bs";
 
 const PackageFilters = ({ data, setData, addPackageModel, setEditMode }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -54,7 +55,7 @@ const filterData = (search, type, status) => {
   }
 
   if (type) {
-    filtered = filtered.filter((j) => j.type === type);
+    filtered = filtered.filter((j) => j.targetAudience === type);
   }
 
   if (status) {
@@ -68,17 +69,18 @@ const filterData = (search, type, status) => {
 
   return (
     <div
-      className="px-4 top-[115px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 md:fixed md:top-[115px] md:left-[297px] md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-30"
+      // className="px-4 top-[115px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 md:fixed md:top-[115px] md:left-[297px] md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-30"
+      className="px-4 w-full bg-white py-3 flex flex-col sm:flex-row flex-wrap items-center gap-4  md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-10"
       //  md:h-[48px]
-      style={{
-        width: window.innerWidth >= 768 ? "calc(100% - 297px)" : "100%",
-      }}
+   
     >
+      <div className="ms-2 flex justify-center items-center gap-3"><BsPeople size={20} /> Packages (3)</div>
+
       {/* Search */}
-      <div className="flex items-center w-full sm:w-auto sm:flex-1">
+      <div className="flex items-end w-full sm:w-auto sm:flex-1 justify-end">
         <div
           className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out px-2 cursor-pointer ${
-            isExpanded ? "w-full sm:w-95 rounded-md" : "w-[42px]"
+            isExpanded ? "w-50 md:w-80 lg:w-95 rounded-md" : "w-[42px]"
           } h-[32px]`}
           onClick={() => {
             setIsExpanded(true);
@@ -106,14 +108,17 @@ const filterData = (search, type, status) => {
 
 
         {/* Plan Type Filter */}
-        <div className="relative w-full sm:w-[128px] transition-all duration-300">
+        <div className="relative w-full sm:w-[158px] transition-all duration-300">
           <select
             className="appearance-none border border-[#D9D9D9] text-sm h-[32px] px-[12px] py-[5px] pr-6 rounded-[6px] text-black/70 hover:bg-[#0000000A] w-full"
             onChange={handleTypeFilter}
           >
-            <option value="">Plan Type</option>
-            <option value="Free">Free</option>
-            <option value="Paid">Paid</option>
+            <option value="">Target Audience</option>
+            <option value="Retailer">Retailer</option>
+            <option value="Jeweler">Jeweler</option>
+            <option value="End User">End User</option>
+            <option value="Retailer">Retailer</option>
+            <option value="General">General</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
             <span className="block w-2 h-2 border-t-2 border-r-2 border-gray-600 transform rotate-135"></span>
@@ -137,9 +142,9 @@ const filterData = (search, type, status) => {
       </div>
 
       {/* Buttons Section */}
-      <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300  ">
-
         {/* Add Product Button */}
+      {/* <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300  ">
+
         <button className="group flex items-center justify-center gap-2 w-full sm:w-[130px] h-[32px] rounded-[6px] px-[12px] bg-[#EDDD8A] border border-[#DDBF22] transition-transform transform hover:scale-105"
         onClick={handleAddForm}
         >
@@ -148,7 +153,9 @@ const filterData = (search, type, status) => {
             Add Product
           </span>
         </button>
-      </div>
+      </div> */}
+
+
     </div>
   );
 };

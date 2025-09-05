@@ -173,6 +173,7 @@ export const useAuthStore = create((set, get) => ({
 
       return { success: true, user };
     } catch (err) {
+      localStorage.removeItem("lastActivity");
       return { success: false, err };
     }
   },
@@ -329,8 +330,9 @@ login: async (credentials) => {
   },
 
   logout: () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("token"); 
     localStorage.removeItem("user");
+    localStorage.removeItem("lastActivity");
     localStorage.removeItem("resetEmail");
     set({
       token: null,

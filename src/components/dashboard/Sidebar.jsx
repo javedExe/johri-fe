@@ -74,7 +74,10 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="z-50 w-0">
+    // <div className="z-50 w-0">
+    // <div className="z-50 h-screen overflow-y-auto flex-shrink-0 fixed bottom-0">
+
+    <div cl>
       {/* Hamburger icon for small screens */}
       <div className="block lg:hidden fixed top-4 left-4 z-[100]">
         <button
@@ -84,10 +87,19 @@ const Sidebar = () => {
           {isOpen ? <IoMdClose /> : <HiOutlineMenu />}
         </button>
       </div>
-
-      {/* Sidebar */}
-      <aside
-        className={`
+      {/* <div className="z-50 h-screen overflow-y-auto flex-shrink-0 fixed bottom-0"> */}
+      <div
+        className={`z-50
+  h-screen overflow-y-auto flex-shrink-0
+  fixed buttom-0   
+  transition-transform duration-300 ease-in-out
+  ${isOpen ? "translate-x-0" : "-translate-x-full"}
+   lg:translate-x-0 lg:block scrollbar-hide
+`}
+      >
+        {/* Sidebar */}
+        <aside
+          className={`
       w-[297px]
       bg-gradient-to-b from-[#EAECF4] to-[#5065A4]
       text-gray-800
@@ -97,34 +109,35 @@ const Sidebar = () => {
       ${isOpen ? "translate-x-0" : "-translate-x-full"}
        w-[200px] xl:w-[297px] lg:translate-x-0 lg:block
     `}
-      >
-        {/* Logo */}
-        <div className="absolute top-[34px] left-[32px]">
-          <img
-            src={desktopLogo}
-            alt="Johri Desktop Logo"
-            className="h-[38.9px] w-[79.89px]"
-          />
-        </div>
+        >
+          {/* Logo */}
+          <div className="absolute top-[34px] left-[32px]">
+            <img
+              src={desktopLogo}
+              alt="Johri Desktop Logo"
+              className="h-[38.9px] w-[79.89px]"
+            />
+          </div>
 
-        <div className="pt-[100px] px-[12px] pb-6 flex flex-col gap-[10px]">
-          {navLinks.map(({ label, icon, path }) => (
-            <NavLink
-              key={label}
-              to={path}
-              className={({ isActive }) =>
-                `${
-                  isActive ? "bg-white rounded-[6px]" : "hover:bg-white/40"
-                } flex py-[16px] w-full items-center px-[24px] gap-[10px] hover:rounded transition`
-              }
-              end
-            >
-              <span className="text-[#4C4C4C] size-[20px]">{icon}</span>
-              <span className="pl-3 text-[16px]">{label}</span>
-            </NavLink>
-          ))}
-        </div>
-      </aside>
+          <div className="pt-[100px] px-[12px] pb-6 flex flex-col gap-[10px]">
+            {navLinks.map(({ label, icon, path }) => (
+              <NavLink
+                key={label}
+                to={path}
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "bg-white rounded-[6px]" : "hover:bg-white/40"
+                  } flex py-[16px] w-full items-center px-[24px] gap-[10px] hover:rounded transition`
+                }
+                end
+              >
+                <span className="text-[#4C4C4C] size-[20px]">{icon}</span>
+                <span className="pl-3 text-[16px]">{label}</span>
+              </NavLink>
+            ))}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 };

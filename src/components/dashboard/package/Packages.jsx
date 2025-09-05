@@ -3,52 +3,103 @@ import axios from "../../../utils/axiosInstance";
 // import { dummyPackages } from "../dummy";
 import PackageFilters from "./PackageFilters";
 import PackageList from "./PackageList";
+import { IoAdd } from "react-icons/io5";
+import { LiaFileExportSolid } from "react-icons/lia";
 
 
 const Packages = () => {
-  const [originalData, setOriginalData] = useState([]); 
-  const [filteredData, setFilteredData] = useState(originalData); 
+  const [originalData, setOriginalData] = useState([]);
+  const [filteredData, setFilteredData] = useState(originalData);
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const fetchPackageList = async ()=>{
-          const response = await axios.get("/admin/packages/all", {
-            withCredentials: true,
-          });
+  const fetchPackageList = async () => {
+    const response = await axios.get("/admin/packages/all", {
+      withCredentials: true,
+    });
 
-          setOriginalData(response.data.packages.data);   
-  }
-  
+    setOriginalData(response.data.packages.data);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchPackageList();
-  },[]);
+  }, []);
 
+  useEffect(() => {
+    setFilteredData(originalData);
+  }, [originalData]);
 
-  useEffect(()=>{
-   setFilteredData(originalData);
-  },[originalData]);
-
-  
   return (
 
-    <div className="flex flex-col lg:flex-row gap-4 px-4 py-6 w-full">
-      {/* Filters Section */}
-      <div className="w-full lg:w-[300px]">
-        <PackageFilters data={originalData} setData={setFilteredData} addPackageModel={() => setShowModal(true)}
-        setEditMode={()=> setIsEditMode(false)}
+    <div className="flex flex-col items-end">
+
+      <div className="w-full px-4 ps-5 flex justify-between">
+        <div>
+          <p className="font-bold text-lg md:text-2xl">Package management</p>
+          <p className="text-xs md:text-sm text-gray-500">Manage and Monitor all the platfrom packages.</p>
+        </div>
+
+
+        <div className="flex gap-3 py-2">
+
+     {/* Export Buttons */}
+      <div className="border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer">
+        <LiaFileExportSolid className="text-lg" /> Export
+      </div>
+
+
+                {/* Buttons Section */}
+        {/* Add Product Button */}
+      <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300  ">
+
+        <button className="flex items-center gap-1 rounded-sm bg-[#EDDD8A] shadow-2xl  shadow-[#DDBF22] px-2 py-1.5"
+        // onClick={handleAddForm}
+        >
+          <IoAdd className="w-[16px] h-[16px]" />
+          <span className="text-[14px] font-normal text-[#2C2607]">
+            Add Product
+          </span>
+        </button>
+      </div>
+        </div>
+
+      </div>
+
+      <div
+        className="flex flex-col w-full"
+        // style={{
+        //     // width: window.innerWidth >= 768 ? "calc(100% - 297px)" : "100%",
+        //     width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
+        //   }}
+      >
+
+        <PackageFilters
+          data={originalData}
+          setData={setFilteredData}
+          addPackageModel={() => setShowModal(true)}
+          setEditMode={() => setIsEditMode(false)}
         />
       </div>
 
-      {/* Table Section */}
-      <div className="h-[calc(100vh-100px)]">
-      {/* <div className="flex-1 overflow-x-auto"> */}
+      <div
+        className=" w-full"
+        // style={{
+        //     width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
+        //   }}
+      >
 
-            <PackageList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} openProductModel={() => setShowModal(true)}  
+        <PackageList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} openProductModel={() => setShowModal(true)}
             setEditMode={()=> setIsEditMode(true)}
             isEditMode={isEditMode}
             fetchList={()=> fetchPackageList()}
-            />
+          />
+
+
+        {/* <PackageList data={filteredData} closeProductModel={() => setShowModal(false)} productModelVisible={showModal} openProductModel={() => setShowModal(true)}
+            setEditMode={()=> setIsEditMode(true)}
+            isEditMode={isEditMode}
+            fetchList={()=> fetchPackageList()}
+            /> */}
 
       </div>
     </div>

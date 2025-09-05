@@ -7,19 +7,34 @@ import { useNavigate } from "react-router-dom";
 import ProgressIndicator from "../../../utils/ProgressIndicator";
 import { useAuthStore } from "../../../store/useAuthStore";
 
+const TIMER_STORAGE_KEY = "otpExpiryTimestamp";
+
 const VerificationDesktop = () => {
   const navigate = useNavigate();
   const email = localStorage.getItem("resetEmail");
-
   const { verifyOtp, sendOtp } = useAuthStore();
 
   // Use useRef to keep refs stable across renders
   const inputRefs = useRef(Array.from({ length: 6 }, () => React.createRef()));
 
+  // Initialize timer from sessionStorage expiry or default 300 sec
+  const [timer, setTimer] = useState(() => {
+    const savedExpiry = sessionStorage.getItem(TIMER_STORAGE_KEY);
+    if (savedExpiry) {
+      const expiry = parseInt(savedExpiry, 10);
+      const now = Date.now();
+      if (expiry > now) {
+        return Math.floor((expiry - now) / 1000);
+      }
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
+      return 0;
+    }
+    return 300;
+  });
+
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [timer, setTimer] = useState(300);
   const [error, setError] = useState("");
-  const [isExpired, setIsExpired] = useState(false);
+  const [isExpired, setIsExpired] = useState(timer <= 0);
 
   useEffect(() => {
     if (error) setError("");
@@ -33,14 +48,19 @@ const VerificationDesktop = () => {
   useEffect(() => {
     if (timer <= 0) {
       setIsExpired(true);
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
       return;
     }
+
+    // Save updated expiry timestamp on timer change
+    sessionStorage.setItem(TIMER_STORAGE_KEY, (Date.now() + timer * 1000).toString());
 
     const countdown = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
           clearInterval(countdown);
           setIsExpired(true);
+          sessionStorage.removeItem(TIMER_STORAGE_KEY);
           return 0;
         }
         return prev - 1;
@@ -52,7 +72,7 @@ const VerificationDesktop = () => {
 
   const handleChange = (element, index) => {
     const value = element.value;
-    if (!/^[0-9]?$/.test(value)) return; // Only allow digits
+    if (!/^[0-9]?$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -76,8 +96,7 @@ const VerificationDesktop = () => {
         newOtp[index - 1] = "";
         setOtp(newOtp);
       }
-    }
-    else if (e.key === "ArrowLeft" && index > 0) {
+    } else if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1].current.focus();
     } else if (e.key === "ArrowRight" && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].current.focus();
@@ -87,9 +106,15 @@ const VerificationDesktop = () => {
   const handleResend = async () => {
     setOtp(new Array(6).fill(""));
     setIsExpired(false);
+
+    // Save new expiry timestamp on resend
+    const newExpiry = Date.now() + 300 * 1000;
+    sessionStorage.setItem(TIMER_STORAGE_KEY, newExpiry.toString());
     setTimer(300);
+
     const result = await sendOtp(email);
     console.log("result: ", result);
+
     if (result.success) {
       inputRefs.current[0].current.focus();
     } else {
@@ -105,7 +130,10 @@ const VerificationDesktop = () => {
     }
     const result = await verifyOtp(email, enteredOtp);
     console.log("Verification: ", result);
+
     if (result.success) {
+      // Clear expiry timestamp on successful verify
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
       navigate("/reset-password", { replace: true });
     } else {
       setError(result.message);
@@ -178,12 +206,19 @@ const VerificationDesktop = () => {
             onClick={handleVerifyOTP}
             disabled={isExpired || otp.includes("")}
             className={`bg-black text-white rounded font-medium text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out  ${
-              isExpired || otp.includes("")
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+              isExpired || otp.includes("") ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             Verify OTP
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+          >
+            <GoArrowLeft className="pr-3 text-4xl text-purple-500"></GoArrowLeft>
+            Back
           </button>
 
           <div className="text-center mt-6 text-gray-600">
@@ -194,13 +229,14 @@ const VerificationDesktop = () => {
                 {String(timer % 60).padStart(2, "0")} minutes
               </p>
             ) : (
-              <button
-                onClick={() => navigate("/forgot-password")}
-                className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
-              >
-                <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
-                Back
-              </button>
+              // <button
+              //   onClick={() => navigate("/forgot-password")}
+              //   className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+              // >
+              //   <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
+              //   Back
+              // </button>
+              <span></span>
             )}
           </div>
         </div>

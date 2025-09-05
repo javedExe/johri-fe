@@ -10,6 +10,8 @@ import AddPackage from "./utils/AddPackage";
 import usePagination from "../../../utils/usePagination";
 import { useEffect, useRef } from "react";
 import Switch from "../../ui/Switch";
+import ActionMenu from "../../ui/ActionMenu";
+import Pagination from "../../../utils/Pagination";
 
 function PackageList({
   data,
@@ -18,7 +20,7 @@ function PackageList({
   openProductModel,
   isEditMode,
   setEditMode,
-  fetchList
+  fetchList,
 }) {
   const tableRef = useRef(null);
   const [formData, setFormData] = useState({});
@@ -71,9 +73,9 @@ function PackageList({
   const {
     paginatedData,
     page: currentPage,
-    // limit: recordsPerPage,
-    // handlePageChange,
-    // totalPages,
+    limit: recordsPerPage,
+    handlePageChange,
+    totalPages,
   } = usePagination(data, 1, 10);
 
   // Scroll to top of table on page change
@@ -83,163 +85,160 @@ function PackageList({
     }
   }, [currentPage]);
 
-  useEffect(() => {
-  }, [data]);
+  useEffect(() => {}, [data]);
 
   return (
-    <>
-      <div
-        className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap z-30"
-        style={{
-          width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
-        }}
-      >
-        {productModelVisible && (
-          <AddPackage
-            onClose={closeProductModel}
-            prevData={formData}
-            isEditMode={isEditMode}
-            fetchList={fetchList}
-          />
-        )}
 
-        {/* Scroll container only for table */}
-        <div
-          className="max-h-[calc(100vh-280px)] overflow-auto border-gray-200 custom-scrollbar"
-          ref={tableRef}
-        >
-          <table className="min-w-full border-collapse table-auto">
-            <thead className="sticky top-0 bg-gray-100 z-20 w-full h-[44px] ">
-              {/* <div className="overflow-x-auto border-gray-200">
-      <table className="min-w-full border-collapse table-auto">
-        <thead className="sticky top-0 bg-gray-100 z-20 w-full h-[44px] "> */}
-              <tr>
-                <th className="min-w-[260px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    Package Name{" "}
-                    {/* <MdArrowDownward className="w-4 h-4 text-gray-500" /> */}
-                  </div>
-                </th>
-                <th className="min-w-[150px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    Price
-                    {/* <MdArrowDownward className="w-4 h-4 text-gray-500" /> */}
-                  </div>
-                </th>
-                <th className="min-w-[150px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  Target Audience
-                </th>
-                <th className="min-w-[200px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    Occurance (Days)
-                    {/* <MdArrowDownward className="w-4 h-4 text-gray-500" /> */}
-                  </div>
-                </th>
-                <th className="min-w-[80px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  <div className="flex items-center gap-1">Features</div>
-                </th>
-                <th className="min-w-[210px] px-20 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  Status
-                </th>
+    <div className="px-4">
 
-                <th
-                  className="min-w-[100px] px-4 py-3 text-center sticky right-0 bg-gray-100 text-[#434956] text-xs font-normal whitespace-nowrap"
-                  style={{ zIndex: 30 }}
-                >
-                  Action
-                </th>
-              </tr>
-            </thead>
+   
+    <div className="overflow-x-auto w-full">
+      {productModelVisible && (
+        <AddPackage
+          onClose={closeProductModel}
+          prevData={formData}
+          isEditMode={isEditMode}
+          fetchList={fetchList}
+        />
+      )}
 
-            <tbody>
-              {paginatedData.length <= 0 && (
-                <tr>
-                  <td>Loading...</td>
-                </tr>
-              )}
+      <table className="min-w-full border-collaps">
+        <thead className="bg-gray-100 sticky top-0 z-20 w-full h-[44px] text-sm">
+          <tr>
+            <th className="px-4 min-w-[3rem] text-left">
+              <input type="checkbox" className="w-4 h-4 accent-purple-500" />
+            </th>
+            <th className="px-4 min-w-[15rem] text-left">Name</th>
+            <th className="px-4 min-w-[8rem] text-left">Price</th>
+            <th className="px-4 min-w-[12rem] text-left">Target Audience</th>
+            <th className="px-4 min-w-[12rem] text-left">Occurrence (Days)</th>
+            <th className="px-4 min-w-[12rem] text-left">Feature</th>
+            <th className="px-4 min-w-[8rem] text-left">Status</th>
+            <th className="px-4 min-w-[6rem] sticky right-0 bg-gray-100">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Map your data here */}
 
-              {paginatedData.length > 0 &&
-                paginatedData.map((row, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-gray-200 hover:bg-gray-50 group"
-                  >
-                    <td className="min-w-[260px] px-4 py-3 text-[#101828] font-inter font-medium text-sm leading-5 tracking-normal whitespace-nowrap">
-                      {row.name} <br />{" "}
-                      <span className="text-[#817e7e] text-xs">{row.type}</span>
-                    </td>
-                    <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                      ₹{row.price}
-                    </td>
-                    <td className="min-w-[150px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                      {row.targetAudience}
-                    </td>
-                    <td className="min-w-[200px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap flex gap-2">
-                      {row.validityDays} Days
-                    </td>
-                    <td className="min-w-[180px] px-4 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                      {row.features.map((materialName, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center border-1 border-[#90affd] text-[#3471ff] bg-[#e9f0fd] text-sm px-1 py-0.5 mx-1 rounded-md gap-2"
-                        >
-                          <MdOutlineEmail className="text-lg" />
-                          {materialName}
-                        </span>
-                      ))}
-                    </td>
+          {paginatedData.length <= 0 && (
+            <tr>
+              <td>Loading...</td>
+            </tr>
+          )}
 
-                    <td className="min-w-[180px] px-20 py-3 text-[#333333] font-inter font-normal text-sm leading-5 tracking-normal whitespace-nowrap">
-                      {row.status ? (
-                        <span className="inline-flex items-center gap-1 text-[#52C41A] text-sm border-1 p-0.5 px-1 rounded-md">
-                          <FaCheckCircle className="text-md" />
-                          Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-red-500 text-sm border-1 p-0.5 px-1 rounded-md">
-                          <IoIosCloseCircle className="text-lg" />
-                          Inactive
-                        </span>
-                      )}
-                    </td>
+          {paginatedData.length > 0 &&
+            paginatedData.map((row, index) => (
+              <tr key={index} className="h-15  border-gray-300">
+                <td className="px-4">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-purple-500"
+                  />
+                </td>
 
-                    {/* Till Here */}
+                <td className="px-4 whitespace-nowrap">
+                  {row.name} <br />{" "}
+                  <span className="text-[#817e7e] text-xs">{row.type}</span>
+                </td>
 
-                    <td
-                      className="min-w-[100px] px-8 py-3 sticky right-0 bg-white border-b-[#EAECF0] flex items-center justify-between gap-2 group-hover:bg-gray-50"
-                      style={{ zIndex: 10 }}
+                <td className="px-4">₹{row.price}</td>
+                <td className="px-4">{row.targetAudience}</td>
+                <td className="px-4">{row.validityDays} Days</td>
+
+                <td className="px-4 whitespace-nowrap">
+                  {row.features.map((materialName, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center border-1 border-[#90affd] text-[#3471ff] bg-[#e9f0fd] text-sm px-1 py-0.5 mx-1 rounded-md gap-2"
                     >
-                      <AiOutlineEdit
-                        className="text-gray-600 hover:text-blue-600 cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
-                        onClick={() => handleEdit(row)}
-                      />
-                      <FiTrash
-                        className=" text-gray-600 hover:text-[#FF4D4F] hover:bg-[#FFF2F0] cursor-pointer transition-transform duration-150 w-9 h-9 p-1 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]"
-                        onClick={() => handleDelete(row.id)}
-                      />
-                      <Switch
-                        className="w-5 h-5 text-[#1677FF] cursor-pointer"
-                        checked={row.status}
-                        onClick={() => handleStatusToggle(row.id, row.status)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+                      <MdOutlineEmail className="text-lg" />
+                      {materialName}
+                    </span>
+                  ))}
+                </td>
+                <td className="px-4">
+                  {row.status ? (
+                    <span className="inline-flex items-center gap-1 text-[#52C41A] text-sm border-1 p-0.5 px-1 rounded-md">
+                      <FaCheckCircle className="text-md" />
+                      Active
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-red-500 text-sm border-1 p-0.5 px-1 rounded-md">
+                      <IoIosCloseCircle className="text-lg" />
+                      Inactive
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 sticky right-0 bg-white">
+                  <ActionMenu
+                    row={row}
+                    handleEdit={handleEdit}
+                    handleDelete={handleDelete}
+                    handleStatusToggle={handleStatusToggle}
+                  />
+                </td>
+              </tr>
+            ))}
+
+          {/* <tr>
+        <td className="border border-gray-300 px-4 py-2">Hello</td>
+        <td className="border border-gray-300 px-4 py-2">Hi</td>
+        <td className="border border-gray-300 px-4 py-2">1000000</td>
+        <td className="border border-gray-300 px-4 py-2 whitespace-nowrap">Some Big Audience Name Lorem ipsum dolor sit amet consectetur adipisicing elit.</td>
+        <td className="border border-gray-300 px-4 py-2">30</td>
+        <td className="border border-gray-300 px-4 py-2">Feature List Lorem ipsum dolor sit amet</td>
+        <td className="border border-gray-300 px-4 py-2">Active</td>
+        <td className="border border-gray-300 px-4 py-2 sticky right-0 bg-white">...</td>
+      </tr>
+      <tr>
+        <td className="border border-gray-300 px-4 py-2">Hello</td>
+        <td className="border border-gray-300 px-4 py-2">Hi</td>
+        <td className="border border-gray-300 px-4 py-2">1000000</td>
+        <td className="border border-gray-300 px-4 py-2 whitespace-nowrap">Some Big Audience Name Lorem ipsum dolor sit amet consectetur adipisicing elit.</td>
+        <td className="border border-gray-300 px-4 py-2">30</td>
+        <td className="border border-gray-300 px-4 py-2">Feature List Lorem ipsum dolor sit amet</td>
+        <td className="border border-gray-300 px-4 py-2">Active</td>
+        <td className="border border-gray-300 px-4 py-2 sticky right-0 bg-white">...</td>
+      </tr>
+      <tr>
+        <td className="border border-gray-300 px-4 py-2">Hello</td>
+        <td className="border border-gray-300 px-4 py-2">Hi</td>
+        <td className="border border-gray-300 px-4 py-2">1000000</td>
+        <td className="border border-gray-300 px-4 py-2 whitespace-nowrap">Some Big Audience Name Lorem ipsum dolor sit amet consectetur adipisicing elit.</td>
+        <td className="border border-gray-300 px-4 py-2">30</td>
+        <td className="border border-gray-300 px-4 py-2">Feature List Lorem ipsum dolor sit amet</td>
+        <td className="border border-gray-300 px-4 py-2">Active</td>
+        <td className="border border-gray-300 px-4 py-2 sticky right-0 bg-white">...</td>
+      </tr>
+      <tr>
+        <td className="border border-gray-300 px-4 py-2">Hello</td>
+        <td className="border border-gray-300 px-4 py-2">Hi</td>
+        <td className="border border-gray-300 px-4 py-2">1000000</td>
+        <td className="border border-gray-300 px-4 py-2 whitespace-nowrap">Some Big Audience Name Lorem ipsum dolor sit amet consectetur adipisicing elit.</td>
+        <td className="border border-gray-300 px-4 py-2">30</td>
+        <td className="border border-gray-300 px-4 py-2">Feature List Lorem ipsum dolor sit amet</td>
+        <td className="border border-gray-300 px-4 py-2">Active</td>
+        <td className="border border-gray-300 px-4 py-2 sticky right-0 bg-white">...</td>
+      </tr> */}
+          {/* Repeat for more rows */}
+        </tbody>
+      </table>
+
+    </div>
 
         {/* Pagination OUTSIDE of the scroll container */}
-        {/* <div className="flex justify-center w-full mt-4 mb-8 px-4">
-              <Pagination
-                totalRecords={data.length}
-                currentPage={currentPage}
-                recordsPerPage={recordsPerPage}
-                onPageChange={handlePageChange}
-              />
-            </div> */}
-      </div>
-    </>
+        <div className="flex justify-center w-full mt-4 mb-8 px-4">
+          <Pagination
+            totalRecords={data.length}
+            currentPage={currentPage}
+            recordsPerPage={recordsPerPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+
+    </div>
   );
 }
 

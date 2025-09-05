@@ -7,40 +7,59 @@ import { GoArrowLeft } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
 
+const TIMER_STORAGE_KEY = "otpExpiryTimestamp";
+
 const VerificationMobile = () => {
   const navigate = useNavigate();
   const email = localStorage.getItem("resetEmail");
-
   const { verifyOtp, sendOtp } = useAuthStore();
 
-  // Use useRef to keep refs stable across renders
   const inputRefs = useRef(Array.from({ length: 6 }, () => React.createRef()));
 
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [timer, setTimer] = useState(300);
+
+  // Initialize from sessionStorage expiry or fallback to 300 secs
+  const [timer, setTimer] = useState(() => {
+    const savedExpiry = sessionStorage.getItem(TIMER_STORAGE_KEY);
+    if (savedExpiry) {
+      const expiry = parseInt(savedExpiry, 10);
+      const now = Date.now();
+      if (expiry > now) {
+        return Math.floor((expiry - now) / 1000);
+      }
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
+      return 0;
+    }
+    return 300;
+  });
+
   const [error, setError] = useState("");
-  const [isExpired, setIsExpired] = useState(false);
+  const [isExpired, setIsExpired] = useState(timer <= 0);
 
   useEffect(() => {
     if (error) setError("");
   }, [otp]);
 
   useEffect(() => {
-    // Focus first input on mount
     inputRefs.current[0].current?.focus();
   }, []);
 
   useEffect(() => {
     if (timer <= 0) {
       setIsExpired(true);
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
       return;
     }
+
+    // Save expiry timestamp for persistence
+    sessionStorage.setItem(TIMER_STORAGE_KEY, (Date.now() + timer * 1000).toString());
 
     const countdown = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
           clearInterval(countdown);
           setIsExpired(true);
+          sessionStorage.removeItem(TIMER_STORAGE_KEY);
           return 0;
         }
         return prev - 1;
@@ -52,7 +71,7 @@ const VerificationMobile = () => {
 
   const handleChange = (element, index) => {
     const value = element.value;
-    if (!/^[0-9]?$/.test(value)) return; // Only allow digits
+    if (!/^[0-9]?$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -65,22 +84,18 @@ const VerificationMobile = () => {
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
-      e.preventDefault(); // prevent default backspace behavior
+      e.preventDefault();
       const newOtp = [...otp];
 
       if (otp[index]) {
-        // If current box has a digit, clear it
         newOtp[index] = "";
         setOtp(newOtp);
       } else if (index > 0) {
-        // Move to previous box and clear it
         inputRefs.current[index - 1].current?.focus();
         newOtp[index - 1] = "";
         setOtp(newOtp);
       }
-    }
-    // Allow arrow key navigation
-    else if (e.key === "ArrowLeft" && index > 0) {
+    } else if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1].current?.focus();
     } else if (e.key === "ArrowRight" && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].current?.focus();
@@ -91,7 +106,11 @@ const VerificationMobile = () => {
     setOtp(new Array(6).fill(""));
     setIsExpired(false);
     setTimer(300);
-    // resend API
+
+    // Reset expiry timestamp on resend
+    const newExpiry = Date.now() + 300 * 1000;
+    sessionStorage.setItem(TIMER_STORAGE_KEY, newExpiry.toString());
+
     const result = await sendOtp(email);
     if (result.success) {
       inputRefs.current[0].current?.focus();
@@ -106,10 +125,11 @@ const VerificationMobile = () => {
       setError("Please enter the 6-digit OTP.");
       return;
     }
-    // verify OTP API
     const result = await verifyOtp(email, enteredOtp);
 
     if (result.success) {
+      // Clear expiry on success
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
       navigate("/reset-password", { replace: true });
     } else {
       setError(result.message);
@@ -124,7 +144,6 @@ const VerificationMobile = () => {
         style={{ backgroundImage: `url(${verifyOTPbg})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 to-black/0 z-0 h-[50vh]" />
-
         <div className="relative z-10 flex flex-col justify-between h-full px-0 pt-4">
           <div>
             <img src={mobileLogo} alt="Johri Logo" className="w-18 h-8" />
@@ -142,7 +161,9 @@ const VerificationMobile = () => {
       <section className="bg-white bg-opacity-50 h-[50vh] px-4 py-4 ">
         <IoMdMail className="bg-purple-200 text-3xl border-none rounded-full text-[#7F56D9] p-2 w-9 h-9" />
         <h2 className="text-xl font-medium">Verification</h2>
-        <h2 className="text-xs font-medium pb-2 text-gray-500">For added security, please enter the OTP sent to your email address.</h2>
+        <h2 className="text-xs font-medium pb-2 text-gray-500">
+          For added security, please enter the OTP sent to your email address.
+        </h2>
 
         <p className="text-gray-700 font-medium mt-1">Enter OTP</p>
 
@@ -182,6 +203,15 @@ const VerificationMobile = () => {
           Verify OTP
         </button>
 
+        <button
+          type="button"
+          onClick={() => navigate("/forgot-password")}
+          className="flex justify-center items-center bg-white border-[1px] border-gray-400 text-sm text-purple-500 rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+        >
+          <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
+          Back
+        </button>
+
         <div className="text-center text-xs mt-6 text-gray-600">
           {timer > 0 ? (
             <p>
@@ -190,13 +220,14 @@ const VerificationMobile = () => {
               {String(timer % 60).padStart(2, "0")} minutes
             </p>
           ) : (
-            <button
-              onClick={() => navigate("/forgot-password")}
-              className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
-            >
-              <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
-              Back
-            </button>
+            // <button
+            //   onClick={() => navigate("/forgot-password")}
+            //   className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+            // >
+            //   <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
+            //   Back
+            // </button>
+            <span></span>
           )}
         </div>
       </section>

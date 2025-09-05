@@ -21,7 +21,9 @@ const ForgotPasswordMobile = () => {
     if (isValid) {
       const result = await sendOtp(email);
       if (result.success) {
-        console.log("Navigating to /verification");
+                 // Save new expiry timestamp on resend
+        const newExpiry = Date.now() + 300 * 1000;
+        sessionStorage.setItem("otpExpiryTimestamp", newExpiry.toString());
         navigate("/verification");
       } else {
         console.log("Error");

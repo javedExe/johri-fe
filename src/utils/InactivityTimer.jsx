@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const SESSION_LENGTH = 24 * 60 * 60;; 
-const WARNING_TIME = 23 * 60 * 60 + 45 * 60;
+const SESSION_LENGTH = 24 * 60 * 60; // in seconds
+const WARNING_TIME = 23 * 60 * 60 + 45 * 60; // 23:45 in seconds
+// const SESSION_LENGTH = 60; // 1 minute in seconds
+// const WARNING_TIME = SESSION_LENGTH - 15; // 45 seconds (15 seconds before session ends)
+const LOCAL_STORAGE_KEY = "lastActivity";
 
 const InactivityTimer = ({ onLogout }) => {
-  const [showModal, setShowModal] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(SESSION_LENGTH - WARNING_TIME); // 10 seconds countdown
+  const [showModal, setShowModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(SESSION_LENGTH - WARNING_TIME); // countdown time
   const warningTimeoutRef = useRef();
   const logoutTimeoutRef = useRef();
   const countdownIntervalRef = useRef();
@@ -16,12 +19,24 @@ const InactivityTimer = ({ onLogout }) => {
     return `${min}:${sec.toString().padStart(2, "0")}`;
   };
 
-  const resetTimers = () => {
+  // Update last activity timestamp in localStorage
+  const updateLastActivity = () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, Date.now().toString());
+  };
+
+  // Clear timers
+  const clearTimers = () => {
     clearTimeout(warningTimeoutRef.current);
     clearTimeout(logoutTimeoutRef.current);
     clearInterval(countdownIntervalRef.current);
+  };
+
+  // Reset timers and update last activity
+  const resetTimers = () => {
+    clearTimers();
     setShowModal(false);
     setTimeLeft(SESSION_LENGTH - WARNING_TIME);
+    updateLastActivity();
 
     warningTimeoutRef.current = setTimeout(() => {
       setShowModal(true);
@@ -35,20 +50,84 @@ const InactivityTimer = ({ onLogout }) => {
     logoutTimeoutRef.current = setTimeout(() => {
       setShowModal(false);
       clearInterval(countdownIntervalRef.current);
+      localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear lastActivity on logout
       onLogout();
     }, SESSION_LENGTH * 1000);
   };
 
+  // Check last activity time and logout if expired
+  const checkLastActivity = () => {
+    const lastActivity = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (lastActivity) {
+      const timeSinceLastActivity = (Date.now() - parseInt(lastActivity, 10)) / 1000;
+      if (timeSinceLastActivity > SESSION_LENGTH) {
+        // Clear Storage then logout
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        // Session expired
+        onLogout();
+        return false;
+      } else {
+        // Adjust timers according to elapsed time
+        const warningDelay = Math.max(WARNING_TIME - timeSinceLastActivity, 0);
+        const logoutDelay = Math.max(SESSION_LENGTH - timeSinceLastActivity, 0);
+
+        clearTimers();
+        setShowModal(false);
+        setTimeLeft(Math.max(SESSION_LENGTH - WARNING_TIME - timeSinceLastActivity, 0));
+
+        warningTimeoutRef.current = setTimeout(() => {
+          setShowModal(true);
+          setTimeLeft(SESSION_LENGTH - WARNING_TIME);
+
+          countdownIntervalRef.current = setInterval(() => {
+            setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+          }, 1000);
+        }, warningDelay * 1000);
+
+        logoutTimeoutRef.current = setTimeout(() => {
+          setShowModal(false);
+          clearInterval(countdownIntervalRef.current);
+          onLogout();
+        }, logoutDelay * 1000);
+        return true;
+      }
+    } else {
+      // No lastActivity found, start fresh
+      resetTimers();
+      return true;
+    }
+  };
+
   useEffect(() => {
     const events = ["mousemove", "mousedown", "keydown", "touchstart"];
-    // events.forEach((event) => window.addEventListener(event, resetTimers));
-    resetTimers();
+    const handleUserActivity = () => {
+      updateLastActivity();
+      resetTimers();
+    };
+    
+
+    events.forEach((event) => window.addEventListener(event, handleUserActivity));
+    window.addEventListener("storage", (e) => {
+      if (e.key === LOCAL_STORAGE_KEY) {
+        checkLastActivity();
+      }
+    });
+
+    // Check on mount
+    const active = checkLastActivity();
+
+    // Handle tab visibility change
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkLastActivity();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      events.forEach((event) => window.removeEventListener(event, resetTimers));
-      clearTimeout(warningTimeoutRef.current);
-      clearTimeout(logoutTimeoutRef.current);
-      clearInterval(countdownIntervalRef.current);
+      events.forEach((event) => window.removeEventListener(event, handleUserActivity));
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimers();
     };
   }, []);
 
@@ -61,6 +140,7 @@ const InactivityTimer = ({ onLogout }) => {
   const handleStay = () => {
     setShowModal(false);
     resetTimers();
+    updateLastActivity();
   };
 
   const handleLogout = () => {
