@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../../../utils/axiosInstance";
+import ExportToCSV from "../../../utils/ExportToCSV";
+import useFeatureStore from "../../../store/useFeatureStore";
 // import { dummyPackages } from "../dummy";
 import PackageFilters from "./PackageFilters";
 import PackageList from "./PackageList";
@@ -12,13 +14,23 @@ const Packages = () => {
   const [filteredData, setFilteredData] = useState(originalData);
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { selectedUsers } = useFeatureStore();
 
   const fetchPackageList = async () => {
-    const response = await axios.get("/admin/packages/all", {
-      withCredentials: true,
-    });
+    setLoading(true);
+    try{
+      const response = await axios.get("/admin/packages/all", {
+        withCredentials: true,
+      });
+      setOriginalData(response.data.packages.data);
+    }catch(error){
+      console.log("Someting went wrong: ", error);
+    }finally{
+      setLoading(false);
+    }
 
-    setOriginalData(response.data.packages.data);
+
   };
 
   useEffect(() => {
@@ -43,9 +55,13 @@ const Packages = () => {
         <div className="flex gap-3 py-2">
 
      {/* Export Buttons */}
-      <div className="border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer">
+      {/* <div className="border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer">
         <LiaFileExportSolid className="text-lg" /> Export
-      </div>
+      </div> */}
+
+          <ExportToCSV data={selectedUsers} filename="Package_List.csv">
+            <LiaFileExportSolid className="text-lg" /> Export
+          </ExportToCSV>
 
 
                 {/* Buttons Section */}
@@ -92,6 +108,7 @@ const Packages = () => {
             setEditMode={()=> setIsEditMode(true)}
             isEditMode={isEditMode}
             fetchList={()=> fetchPackageList()}
+            loading={loading}
           />
 
 

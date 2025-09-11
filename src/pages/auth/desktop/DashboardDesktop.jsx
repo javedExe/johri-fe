@@ -58,7 +58,7 @@ const DashboardDesktop = () => {
   // </div>
 
   
-<div className="flex min-h-screen">
+<div className="flex min-h-screen bg-[#F8FAFC]">
   {/* Sidebar */}
   <div className="w-0 lg:w-[297px] h-screen flex-shrink-0 ">
     <Sidebar />

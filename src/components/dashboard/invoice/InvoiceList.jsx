@@ -8,7 +8,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { GoDownload } from "react-icons/go";
 import axios from "../../../utils/axiosInstance";
 
-function InvoiceList({ data, setShowInvoice, showInvoice, isFilterActive }) {
+function InvoiceList({ data, setShowInvoice, showInvoice, isFilterActive, loading }) {
   const tableRef = useRef(null);
   const [invoiceId, setInvoiceId] = useState(null);
 
@@ -131,9 +131,15 @@ const downloadInvoice = async (invoiceId) => {
             </thead>
 
             <tbody>
-              {!isFilterActive && paginatedData.length <= 0 && (
+              {loading && !isFilterActive && paginatedData.length <= 0 && (
                 <tr>
-                  <td>Loading...</td>
+                  <td colSpan={5} className="text-center">Loading...</td>
+                </tr>
+              )}
+
+              {!loading && paginatedData.length <= 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center">No Data found</td>
                 </tr>
               )}
 
@@ -207,3 +213,4 @@ const downloadInvoice = async (invoiceId) => {
 }
 
 export default InvoiceList;
+

@@ -9,66 +9,75 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { HiOutlineMenu } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
 import { AiOutlineSolution } from "react-icons/ai";
-
-import desktopLogo from "../../assets/desktop-logo.png";
+import { FaRegFolderOpen } from "react-icons/fa";
+// import desktopLogo from "../../assets/desktop-logo.png";
+import desktopLogo from "../../assets/logo-v2.png";
 import productIcon from "../../assets/product-icon.png";
-import categoryIcon from "../../assets/category-icon.png";
+// import categoryIcon from "../../assets/category-icon.png";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { label: "Dashboard", icon: <RxDashboard />, path: "/admin/dashboard" },
-    { label: "Users", icon: <PiUsers />, path: "/admin/dashboard/users" },
+    {
+      label: "Dashboard",
+      icon: <RxDashboard className="text-white" />,
+      path: "/admin/dashboard",
+    },
+    {
+      label: "Users",
+      icon: <PiUsers className="text-white text-lg" />,
+      path: "/admin/dashboard/users",
+    },
     {
       label: "Jewelers",
-      icon: <SlDiamond />,
+      icon: <SlDiamond className="text-white" />,
       path: "/admin/dashboard/jewelers",
     },
     {
       label: "Products",
       icon: (
-        <img src={productIcon} className="w-[18px] h-[17px]" alt="product" />
+        <img
+          src={productIcon}
+          className="w-[35px] h-[25px] text-white"
+          alt="product"
+        />
       ),
       path: "/admin/dashboard/products",
     },
     {
       label: "Categories",
-      icon: (
-        <img src={categoryIcon} className="w-[18px] h-[17px]" alt="category" />
-      ),
+      icon: <FaRegFolderOpen className="text-2xl text-white" />,
       path: "/admin/dashboard/category-management",
     },
     {
       label: "Package Management",
-      icon: (
-        <img src={categoryIcon} className="w-[18px] h-[17px]" alt="category" />
-      ),
+      icon: <FaRegFolderOpen className="text-2xl text-white" />,
       path: "/admin/dashboard/package-management",
     },
     {
       label: "Invoice Management",
-      icon: <AiOutlineSolution className="text-2xl" />,
+      icon: <AiOutlineSolution className="text-2xl text-white" />,
       path: "/admin/dashboard/invoice-management",
     },
     {
       label: "Offers",
-      icon: <MdOutlineLocalOffer className="rotate-90" />,
+      icon: <MdOutlineLocalOffer className="rotate-90 text-white" />,
       path: "/admin/dashboard/offers",
     },
     {
       label: "Support and Complaints",
-      icon: <PiQuestionMark />,
+      icon: <PiQuestionMark className="text-white" />,
       path: "/admin/dashboard/support",
     },
     {
       label: "Analytics",
-      icon: <AiOutlineBarChart />,
+      icon: <AiOutlineBarChart className="text-white" />,
       path: "/admin/dashboard/analytics",
     },
     {
       label: "Settings",
-      icon: <IoSettingsOutline />,
+      icon: <IoSettingsOutline className="text-white" />,
       path: "/admin/dashboard/settings",
     },
   ];
@@ -77,7 +86,7 @@ const Sidebar = () => {
     // <div className="z-50 w-0">
     // <div className="z-50 h-screen overflow-y-auto flex-shrink-0 fixed bottom-0">
 
-    <div cl>
+    <div>
       {/* Hamburger icon for small screens */}
       <div className="block lg:hidden fixed top-4 left-4 z-[100]">
         <button
@@ -90,19 +99,19 @@ const Sidebar = () => {
       {/* <div className="z-50 h-screen overflow-y-auto flex-shrink-0 fixed bottom-0"> */}
       <div
         className={`z-50
-  h-screen overflow-y-auto flex-shrink-0
-  fixed buttom-0   
-  transition-transform duration-300 ease-in-out
-  ${isOpen ? "translate-x-0" : "-translate-x-full"}
-   lg:translate-x-0 lg:block scrollbar-hide
-`}
+        h-screen overflow-y-auto flex-shrink-0
+        fixed buttom-0   
+        transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0 lg:block scrollbar-hide
+      `}
       >
         {/* Sidebar */}
         <aside
           className={`
       w-[297px]
-      bg-gradient-to-b from-[#EAECF4] to-[#5065A4]
-      text-gray-800
+      bg-[#141E39]
+      text-white
       sticky top-0 self-start
       h-fit
       transition-transform duration-300 ease-in-out
@@ -126,7 +135,9 @@ const Sidebar = () => {
                 to={path}
                 className={({ isActive }) =>
                   `${
-                    isActive ? "bg-white rounded-[6px]" : "hover:bg-white/40"
+                    isActive
+                      ? "bg-[#155DFC] rounded-[6px]"
+                      : "hover:bg-white/40"
                   } flex py-[16px] w-full items-center px-[24px] gap-[10px] hover:rounded transition`
                 }
                 end

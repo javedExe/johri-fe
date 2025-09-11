@@ -4,6 +4,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { IoIosCloseCircle } from "react-icons/io";
 import { FaCheckCircle } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
+import useFeatureStore from "../../../store/useFeatureStore";
 import { IoToggle } from "react-icons/io5";
 import { FiTrash } from "react-icons/fi";
 import AddPackage from "./utils/AddPackage";
@@ -21,9 +22,39 @@ function PackageList({
   isEditMode,
   setEditMode,
   fetchList,
+  loading
 }) {
   const tableRef = useRef(null);
   const [formData, setFormData] = useState({});
+    const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const { setSelectedUsers } = useFeatureStore();
+
+
+    useEffect(() => {
+      setSelectedUsers(
+        // data.filter((row, idx) => selectedRowIds.includes(idx))
+        data.filter(row => selectedRowIds.includes(row.id))
+      );
+    }, [selectedRowIds, data, setSelectedUsers]);
+
+
+      const handleSelectAllVisible = (e) => {
+      if (e.target.checked) {
+        setSelectedRowIds(paginatedData.map(row => row.id)); 
+      } else {
+        setSelectedRowIds(prevSelected =>
+          prevSelected.filter(id => !paginatedData.some(row => row.id === id))
+        );
+      }
+    };
+
+
+      const handleOneCheckbox = (idx) => {
+    setSelectedRowIds((prev) =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
+  };
+
 
   const handleEdit = (value) => {
     console.log(value);
@@ -75,7 +106,7 @@ function PackageList({
     page: currentPage,
     limit: recordsPerPage,
     handlePageChange,
-    totalPages,
+    // totalPages,
   } = usePagination(data, 1, 10);
 
   // Scroll to top of table on page change
@@ -106,7 +137,12 @@ function PackageList({
         <thead className="bg-gray-100 sticky top-0 z-20 w-full h-[44px] text-sm">
           <tr>
             <th className="px-4 min-w-[3rem] text-left">
-              <input type="checkbox" className="w-4 h-4 accent-purple-500" />
+              <input 
+                type="checkbox" 
+                className="w-4 h-4 accent-purple-500" 
+                checked={paginatedData.every(row => selectedRowIds.includes(row.id))}
+                onChange={handleSelectAllVisible}
+              />
             </th>
             <th className="px-4 min-w-[15rem] text-left">Name</th>
             <th className="px-4 min-w-[8rem] text-left">Price</th>
@@ -122,9 +158,15 @@ function PackageList({
         <tbody>
           {/* Map your data here */}
 
-          {paginatedData.length <= 0 && (
+          { loading && paginatedData.length <= 0 && (
             <tr>
-              <td>Loading...</td>
+              <td colSpan={5} className="text-center">Loading...</td>
+            </tr>
+          )}
+
+          { !loading && paginatedData.length <= 0 && (
+            <tr>
+              <td colSpan={5} className="text-center">No data Found</td>
             </tr>
           )}
 
@@ -135,6 +177,8 @@ function PackageList({
                   <input
                     type="checkbox"
                     className="w-4 h-4 accent-purple-500"
+                    checked={selectedRowIds.includes(row.id)}
+                    onChange={() => handleOneCheckbox(row.id)}
                   />
                 </td>
 
@@ -144,8 +188,10 @@ function PackageList({
                 </td>
 
                 <td className="px-4">₹{row.price}</td>
-                <td className="px-4">{row.targetAudience}</td>
-                <td className="px-4">{row.validityDays} Days</td>
+                {/* <td className="px-4">{row.targetAudience}</td> */}
+                <td className="px-4">{row.target_audience}</td>
+                {/* <td className="px-4">{row.validityDays} Days</td> */}
+                <td className="px-4">{row.validity_days} Days</td>
 
                 <td className="px-4 whitespace-nowrap">
                   {row.features.map((materialName, index) => (

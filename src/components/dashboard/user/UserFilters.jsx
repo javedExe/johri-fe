@@ -1,18 +1,15 @@
 import React, { useState, useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
+import { BsPeople } from "react-icons/bs";
 import { LiaFileExportSolid } from "react-icons/lia";
 import { FaPlus } from "react-icons/fa6";
 
-
-const UserFilters = ({ data, setData, formVisible }) => {
+const UserFilters = ({ data, setData}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedType, setselectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const inputRef = useRef(null);
-
-
-
 
   const handleStatusFilter = (e) => {
     const status = e.target.value;
@@ -46,7 +43,6 @@ const UserFilters = ({ data, setData, formVisible }) => {
       );
     }
 
-
     if (status) {
       filtered = filtered.filter((j) => j.status === status);
     }
@@ -55,18 +51,16 @@ const UserFilters = ({ data, setData, formVisible }) => {
   };
 
   return (
-    <div
-      className="px-4 top-[115px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 md:fixed md:top-[115px] md:left-[297px] md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-30"
-      //  md:h-[48px]
-      style={{
-        width: window.innerWidth >= 768 ? "calc(100% - 297px)" : "100%",
-      }}
-    >
+    <div className="px-4 w-full bg-white py-3 flex flex-col sm:flex-row flex-wrap items-center gap-4  md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-10">
+      <div className="ms-2 flex justify-center items-center gap-3">
+        <BsPeople size={20} /> Packages ({data.length})
+      </div>
+
       {/* Search */}
-      <div className="flex items-center w-full sm:w-auto sm:flex-1">
+      <div className="flex items-end w-full sm:w-auto sm:flex-1 justify-end">
         <div
-          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out px-2 cursor-pointer ${
-            isExpanded ? "w-full sm:w-95 rounded-md" : "w-[42px]"
+          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out ps-2 cursor-pointer ${
+            isExpanded ? "w-50 md:w-80 lg:w-95 rounded-md" : "w-[42px]"
           } h-[32px]`}
           onClick={() => {
             setIsExpanded(true);
@@ -91,9 +85,6 @@ const UserFilters = ({ data, setData, formVisible }) => {
 
       {/* Filters Section */}
       <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end">
-
-
-
         {/* Status Filter */}
         <div className="relative w-full sm:w-[128px] transition-all duration-300">
           <select
@@ -109,19 +100,23 @@ const UserFilters = ({ data, setData, formVisible }) => {
           </div>
         </div>
       </div>
-
-      {/* Export Buttons */}
-      <div className="border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer">
-        <LiaFileExportSolid className="text-lg" /> Export
-      </div>
-      {/* Form Buttons */}
-      <div className="border border-[#DDBF22] bg-[#EDDD8A] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer"
-      onClick={formVisible}
-      >
-        <FaPlus className="text-lg" /> Add User
-      </div>
     </div>
   );
 };
 
 export default UserFilters;
+
+{
+  /* Export Buttons */
+}
+// <div className="border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer">
+//   <LiaFileExportSolid className="text-lg" /> Export
+// </div>
+{
+  /* Form Buttons */
+}
+// <div className="border border-[#DDBF22] bg-[#EDDD8A] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer"
+// onClick={formVisible}
+// >
+//   <FaPlus className="text-lg" /> Add User
+// </div>

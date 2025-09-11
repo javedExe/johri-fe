@@ -1,26 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "../../../../utils/axiosInstance";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-function AddUser({ onClose }) {
+function AddUser({ onClose, formData, setReload }) {
+
+  const [loading, setLoading] = useState(false);
+
   const validationSchema = Yup.object({
-    fullName: Yup.string().required("Full Name is required."),
+    first_name: Yup.string().required("Name is required."),
+    // last_name: Yup.string().required("Last Name is required."),
     email: Yup.string().email("Invalid email").required("Email is required."),
-    phoneNumber: Yup.string().required("Phone Number is required.")
+    phone_number: Yup.string().required("Phone Number is required.")
       .length(10, "Enter Valid number."),
     status: Yup.string().required("Status is required."),
   });
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      status: "",
+      first_name: formData.first_name || "",
+      last_name: formData.last_name|| "",
+      email: formData.email || "",
+      phone_number: formData.phone_number || "",
+      status: formData.status || false,
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log("Validated Data:", values);
+    onSubmit: async (values) => {
+
+      const filteredValues = Object.fromEntries(
+        Object.entries(values).filter(
+          ([_, v]) => v !== "" && v !== null && v !== undefined 
+          && (typeof v !== "boolean" || v === true) 
+        )
+      );
+
+      setLoading(true);
+            try{
+              // await axios.delete(`/enduser/${id}/delete`, filteredValues);
+              await axios.delete(`/enduser/delete`, filteredValues);
+              setReload();
+              onClose();
+            }catch(err){
+              console.log("Error occured", err);
+            }finally{
+              setLoading(false);
+            }
+
+      console.log("Validated Data:", filteredValues);
       alert("User saved successfully.");
     },
   });
@@ -42,22 +68,45 @@ function AddUser({ onClose }) {
         {/* Form */}
         <form noValidate onSubmit={formik.handleSubmit} className="space-y-4">
           {/* Full Name */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            
           <div className="flex flex-col">
             <label className="text-sm font-medium mb-1">
-              Full Name :
+              First Name :
             </label>
             <input
               type="text"
-              name="fullName"
-              value={formik.values.fullName}
+              name="first_name"
+              value={formik.values.first_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               placeholder="Type here..."
               className="w-full px-3 py-2 border rounded-md text-sm border-gray-300"
             />
-            {formik.touched.fullName && formik.errors.fullName && (
-              <span className="text-red-500 text-sm">{formik.errors.fullName}</span>
+            {formik.touched.first_name && formik.errors.first_name && (
+              <span className="text-red-500 text-sm">{formik.errors.first_name}</span>
             )}
+          </div>
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">
+              Last Name :
+            </label>
+            <input
+              type="text"
+              name="last_name"
+              value={formik.values.last_name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Type here..."
+              className="w-full px-3 py-2 border rounded-md text-sm border-gray-300"
+            />
+            {formik.touched.last_name && formik.errors.last_name && (
+              <span className="text-red-500 text-sm">{formik.errors.last_name}</span>
+            )}
+          </div>
+
+
+
           </div>
 
           {/* Email */}
@@ -79,10 +128,12 @@ function AddUser({ onClose }) {
             )}
           </div>
 
+
+
           {/* Phone + Status in same row */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             {/* Phone */}
-            <div className="flex flex-col w-1/2">
+            <div className="flex flex-col w-full">
               <label className="text-sm font-medium mb-1">Phone Number</label>
               <div className="flex">
                 <select
@@ -93,21 +144,21 @@ function AddUser({ onClose }) {
                 </select>
                 <input
                   type="tel"
-                  name="phoneNumber"
-                  value={formik.values.phoneNumber}
+                  name="phone_number"
+                  value={formik.values.phone_number}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="Type here..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-r-md text-sm"
                 />
               </div>
-              {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                <span className="text-red-500 text-sm">{formik.errors.phoneNumber}</span>
+              {formik.touched.phone_number && formik.errors.phone_number && (
+                <span className="text-red-500 text-sm">{formik.errors.phone_number}</span>
               )}
             </div>
 
             {/* Status */}
-            <div className="flex flex-col w-1/2">
+            <div className="flex flex-col w-full">
               <label className="text-sm font-medium mb-1">Status:</label>
               <select
                 name="status"
@@ -117,8 +168,8 @@ function AddUser({ onClose }) {
                 className="w-full px-3 py-2 border rounded-md text-sm border-gray-300"
               >
                 <option value="" disabled>Select Type</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
               </select>
               {formik.touched.status && formik.errors.status && (
                 <span className="text-red-500 text-sm">{formik.errors.status}</span>
@@ -137,9 +188,10 @@ function AddUser({ onClose }) {
             </button>
             <button
               type="submit"
-              className="bg-[#141432] text-white border py-2 rounded text-sm w-full"
+              className={`text-white border py-2 rounded text-sm w-full ${loading? "bg-[#2a2a47]" : "bg-[#141432]"}`}
+              disabled={loading}
             >
-              Save
+              {loading? "Updating..." : "Update"}
             </button>
           </div>
         </form>

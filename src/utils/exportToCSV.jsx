@@ -1,37 +1,59 @@
-const exportToCSV = (data = [], filename = "export.csv") => {
-  if (!data.length) {
-    console.warn("No data to export.");
-    return;
-  }
+import React from "react";
 
-  const headers = Object.keys(data[0]);
-  const csvRows = [];
+// Utility: Convert array of objects to CSV string
+function convertToCSV(data) {
+  if (!data || !data.length) return '';
+  const keys = Object.keys(data[0]);
+  const prettify = (str) =>
+    str.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    
+  const header = keys.map(prettify).join(",");
+  
+  const rows = data.map(row => 
+    keys.map(k => {
+      let val = row[k] ?? "";
+      if (Array.isArray(val) || (typeof val === "object" && val !== null)) {
+        val = JSON.stringify(val);
+      }
+      if (typeof val === "string" && (val.includes(",") || val.includes('\n') || val.includes('"'))) {
+        val = `"${val.replace(/"/g, '""')}"`;
+      }
+      return val;
+    }).join(",")
+  );
+  
+  return [header, ...rows].join("\n");
+}
 
-  // Add the header row
-  csvRows.push(headers.join(","));
 
-  // Add data rows
-  for (const row of data) {
-    const values = headers.map((key) => {
-      const val = row[key] ?? ""; // Handle null/undefined
-      // Wrap in double quotes and escape internal quotes
-      return `"${String(val).replace(/"/g, '""')}"`;
-    });
-    csvRows.push(values.join(","));
-  }
 
-  // Create a CSV Blob
-  const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+// Reusable export button
+function ExportToCSVButton({ data, filename = "export.csv", children, ...rest }) {
+  const handleDownload = () => {
+    if (!data || !data.length) return;
+    const csv = convertToCSV(data);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  // Trigger file download
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
-  // Cleanup
-  URL.revokeObjectURL(url);
-};
+  return (
+    <button
+      type="button"
+      onClick={handleDownload}
+      disabled={!data || data.length === 0}
+      className={rest.className || "border border-[#D9D9D9] text-sm px-4 py-1 rounded-md text-gray-600 flex gap-2 items-center cursor-pointer"}
+    >
+      {children || "Export"}
+    </button>
+  );
+}
 
-export default exportToCSV;
+export default ExportToCSVButton;
