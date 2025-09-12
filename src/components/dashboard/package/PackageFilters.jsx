@@ -3,7 +3,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoAdd } from "react-icons/io5";
 import { BsPeople } from "react-icons/bs";
 
-const PackageFilters = ({ data, setData, addPackageModel, setEditMode }) => {
+const PackageFilters = ({ data, setData, addPackageModel, setEditMode, filteredData, selectedUsers }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
@@ -49,13 +49,13 @@ const filterData = (search, type, status) => {
     filtered = filtered.filter((j) =>
       j.name.toLowerCase().includes(lowerSearch) ||
       String(j.price).toLowerCase().includes(lowerSearch) ||
-      String(j.validityDays).toLowerCase().includes(lowerSearch) ||
-      j.targetAudience.toLowerCase().includes(lowerSearch)
+      String(j.validity_days).toLowerCase().includes(lowerSearch) ||
+      j.target_audience.toLowerCase().includes(lowerSearch)
     );
   }
 
   if (type) {
-    filtered = filtered.filter((j) => j.targetAudience === type);
+    filtered = filtered.filter((j) => j.target_audience === type);
   }
 
   if (status) {
@@ -74,12 +74,21 @@ const filterData = (search, type, status) => {
       //  md:h-[48px]
    
     >
-      <div className="ms-2 flex justify-center items-center gap-3"><BsPeople size={20} /> Packages (3)</div>
+      <div className="ms-2 flex justify-center items-center gap-3">
+        <BsPeople size={20} /> Packages ({filteredData.length})
+        {selectedUsers >= 0 ? (
+          ""
+        ) : (
+          <span className="flex items-center border border-[#D9D9D9] rounded bg-white cursor-pointer px-2 ms-2">
+            Bulk Action
+          </span>
+        )}        
+        </div>
 
       {/* Search */}
       <div className="flex items-end w-full sm:w-auto sm:flex-1 justify-end">
         <div
-          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out px-2 cursor-pointer ${
+          className={`flex items-center border border-[#D9D9D9] rounded bg-white transition-all duration-300 ease-in-out ps-2 cursor-pointer ${
             isExpanded ? "w-50 md:w-80 lg:w-95 rounded-md" : "w-[42px]"
           } h-[32px]`}
           onClick={() => {

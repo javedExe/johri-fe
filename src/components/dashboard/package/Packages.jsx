@@ -69,7 +69,7 @@ const Packages = () => {
       <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300  ">
 
         <button className="flex items-center gap-1 rounded-sm bg-[#EDDD8A] shadow-2xl  shadow-[#DDBF22] px-2 py-1.5"
-        // onClick={handleAddForm}
+        onClick={() => setShowModal(!showModal)}
         >
           <IoAdd className="w-[16px] h-[16px]" />
           <span className="text-[14px] font-normal text-[#2C2607]">
@@ -94,6 +94,8 @@ const Packages = () => {
           setData={setFilteredData}
           addPackageModel={() => setShowModal(true)}
           setEditMode={() => setIsEditMode(false)}
+          filteredData={filteredData}
+          selectedUsers={selectedUsers}
         />
       </div>
 

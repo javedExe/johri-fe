@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../utils/axiosInstance";
 import useFeatureStore from "../../../store/useFeatureStore";
-import ExportToCSV from "../../../utils/ExportToCSV";
+import ExportToCSV from "../../../utils/ExportToCSV.jsx"
 // import { dummyUser } from "../dummy";
 import { LiaFileExportSolid } from "react-icons/lia";
 // import { IoAdd } from "react-icons/io5";
@@ -28,6 +28,7 @@ const User = () => {
         });
 
         setOriginalData(response.data.user);
+        console.log(response.data.user);
       
       }catch(err){
         console.log("Error occured", err);
@@ -89,6 +90,7 @@ const User = () => {
           data={originalData}
           setData={setFilteredData}
           formVisible={() => setShowForm(true)}
+          selectedUsers={selectedUsers}
         />
       </div>
 

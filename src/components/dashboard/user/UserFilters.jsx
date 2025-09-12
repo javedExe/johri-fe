@@ -4,7 +4,7 @@ import { BsPeople } from "react-icons/bs";
 import { LiaFileExportSolid } from "react-icons/lia";
 import { FaPlus } from "react-icons/fa6";
 
-const UserFilters = ({ data, setData}) => {
+const UserFilters = ({ data, setData, selectedUsers }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [selectedType, setselectedType] = useState("");
@@ -12,7 +12,8 @@ const UserFilters = ({ data, setData}) => {
   const inputRef = useRef(null);
 
   const handleStatusFilter = (e) => {
-    const status = e.target.value;
+    const value = e.target.value;
+    let status = value === "" ? "" : value === "true" ? true : false;
     setSelectedStatus(status);
     filterData(searchValue, selectedType, status);
   };
@@ -35,15 +36,19 @@ const UserFilters = ({ data, setData}) => {
 
     if (search) {
       const lowerSearch = String(search).toLowerCase();
+
       filtered = filtered.filter(
         (item) =>
-          item.name.toLowerCase().includes(lowerSearch) ||
-          String(item.phoneNumber).toLowerCase().includes(lowerSearch) ||
-          item.email.toLowerCase().includes(lowerSearch)
+          (item.first_name?.toLowerCase() || "").includes(lowerSearch) ||
+          (item.last_name?.toLowerCase() || "").includes(lowerSearch) ||
+          String(item.phone_number ?? "")
+            .toLowerCase()
+            .includes(lowerSearch) ||
+          (item.email?.toLowerCase() || "").includes(lowerSearch)
       );
     }
 
-    if (status) {
+    if (status !== "") {
       filtered = filtered.filter((j) => j.status === status);
     }
 
@@ -53,7 +58,14 @@ const UserFilters = ({ data, setData}) => {
   return (
     <div className="px-4 w-full bg-white py-3 flex flex-col sm:flex-row flex-wrap items-center gap-4  md:flex md:items-center md:space-x-2 md:whitespace-nowrap z-10">
       <div className="ms-2 flex justify-center items-center gap-3">
-        <BsPeople size={20} /> Packages ({data.length})
+        <BsPeople size={20} /> Users ({data.length})
+        {selectedUsers >= 0 ? (
+          ""
+        ) : (
+          <span className="flex items-center border border-[#D9D9D9] rounded bg-white cursor-pointer px-2 ms-2">
+            Bulk Action
+          </span>
+        )}
       </div>
 
       {/* Search */}
@@ -92,8 +104,8 @@ const UserFilters = ({ data, setData}) => {
             onChange={handleStatusFilter}
           >
             <option value="">Status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value={true}>Active</option>
+            <option value={false}>Inactive</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
             <span className="block w-2 h-2 border-t-2 border-r-2 border-gray-600 transform rotate-135"></span>

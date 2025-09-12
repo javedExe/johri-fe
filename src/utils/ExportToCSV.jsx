@@ -28,7 +28,7 @@ function convertToCSV(data) {
 
 
 // Reusable export button
-function ExportToCSV({ data, filename = "exports.csv", children, ...rest }) {
+function ExportToCSV({ data, filename = "export.csv", children, ...rest }) {
   const handleDownload = () => {
     if (!data || !data.length) return;
     const csv = convertToCSV(data);
@@ -55,6 +55,5 @@ function ExportToCSV({ data, filename = "exports.csv", children, ...rest }) {
     </button>
   );
 }
-
 
 export default ExportToCSV;

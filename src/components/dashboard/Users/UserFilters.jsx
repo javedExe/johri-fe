@@ -158,14 +158,14 @@ const UserFilters = () => {
 
       {/* Buttons */}
       <div className="flex gap-4 w-full sm:w-auto sm:flex-row sm:justify-end transition-all duration-300">
-        <button
+        {/* <button
           type="button"
           className="group flex items-center justify-center gap-1 w-full sm:w-[92px] h-[32px] rounded-[6px] px-[12px] bg-white border border-[#D9D9D9] transition-transform transform hover:scale-105"
           onClick={handleExportCSV}
         >
           <CiExport className="w-[16px] h-[16px] rotate-90" />
           <span className="text-[14px] text-black/70">Export</span>
-        </button>
+        </button> */}
 
         <button
           type="button"
