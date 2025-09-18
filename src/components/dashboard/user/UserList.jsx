@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import axios from "../../../utils/axiosInstance";
 import Pagination from "../../../utils/Pagination";
 import usePagination from "../../../utils/usePagination";
@@ -15,19 +15,23 @@ import { IoToggle } from "react-icons/io5";
 import { FaArrowDown } from "react-icons/fa6";
 import Switch from "../../ui/Switch";
 
-
 // function InvoiceList({ data, openProductModel}) {
-function UserList({ 
-  data, userFormVisible, closeForm, openForm, 
-  loading, setLoading, setReload, formData, setFormData 
+function UserList({
+  data,
+  userFormVisible,
+  closeForm,
+  openForm,
+  loading,
+  setLoading,
+  setReload,
+  formData,
+  setFormData,
 }) {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const tableRef = useRef(null);
 
-
   // store objects
   const { setSelectedUsers } = useFeatureStore();
-  
 
   const {
     paginatedData,
@@ -37,11 +41,10 @@ function UserList({
     // totalPages,
   } = usePagination(data, 1, 10);
 
-
   useEffect(() => {
     setSelectedUsers(
       // data.filter((row, idx) => selectedRowIds.includes(idx))
-      data.filter(row => selectedRowIds.includes(row.id))
+      data.filter((row) => selectedRowIds.includes(row.id))
     );
   }, [selectedRowIds, data, setSelectedUsers]);
 
@@ -54,16 +57,15 @@ function UserList({
     }
   }, [currentPage]);
 
-
   const handleSelectAllVisible = (e) => {
-  if (e.target.checked) {
-    setSelectedRowIds(paginatedData.map(row => row.id)); 
-  } else {
-    setSelectedRowIds(prevSelected =>
-      prevSelected.filter(id => !paginatedData.some(row => row.id === id))
-    );
-  }
-};
+    if (e.target.checked) {
+      setSelectedRowIds(paginatedData.map((row) => row.id));
+    } else {
+      setSelectedRowIds((prevSelected) =>
+        prevSelected.filter((id) => !paginatedData.some((row) => row.id === id))
+      );
+    }
+  };
 
   // const handleAllCheckbox = (e) => {
   //   if (e.target.checked) {
@@ -74,46 +76,44 @@ function UserList({
   //   }
   // };
 
-
   const handleOneCheckbox = (idx) => {
     setSelectedRowIds((prev) =>
-      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
     );
   };
 
-  const handleEdit = (row) =>{
+  const handleEdit = (row) => {
     setFormData(row);
     openForm();
     alert(row);
-  }
+  };
 
-  const handleDelete = async (id) =>{
+  const handleDelete = async (id) => {
     // alert(id);
     setLoading(true);
-      try{
-        await axios.delete(`/enduser/${id}/delete`, {
-          withCredentials: true,
-        });
-        setReload();
-      }catch(err){
-        console.log("Error occured", err);
-      }finally{
-        setLoading(false);
-      }
-  }
+    try {
+      await axios.delete(`/enduser/${id}/delete`, {
+        withCredentials: true,
+      });
+      setReload();
+    } catch (err) {
+      console.log("Error occured", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleStatusToggle = async (id) =>{
-    try{
+  const handleStatusToggle = async (id) => {
+    try {
       await axios.put(`/enduser/${id}/status`);
       alert(id);
       setReload();
-      }catch(err){
-        console.log("Error occured", err);
-      }finally{
-        setLoading(false);
-      }
-
-  }
+    } catch (err) {
+      console.log("Error occured", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     // <>
@@ -124,9 +124,7 @@ function UserList({
     //     }}
     //   >
 
-
     //         {userFormVisible && <AddUser onClose={closeForm}/>}
-
 
     //     {/* Scroll container only for table */}
     //     <div
@@ -198,7 +196,7 @@ function UserList({
     //                   <AiOutlineEdit className="text-gray-600 hover:text-blue-600 cursor-pointer transition-transform duration-150 w-7 h-7 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
     //                   <FiTrash className=" text-gray-600 hover:text-[#FF4D4F] hover:bg-[#FFF2F0] cursor-pointer transition-transform duration-150 w-9 h-9 p-1 rounded-[4px] shadow-[1px_2px_4px_0px_#0000000F]" />
     //                   {
-                        
+
     //                     row.status === "Active" ? (<Switch checked={true} className="cursor-pointer" />) : (<Switch className="cursor-pointer" />)
     //                   }
     //                 </div>
@@ -221,122 +219,117 @@ function UserList({
     //   </div>
     // </>
 
+    <div className="px-4 bg-white">
+      <div className="overflow-x-auto w-full">
+        {userFormVisible && (
+          <AddUser
+            formData={formData}
+            onClose={closeForm}
+            setReload={setReload}
+          />
+        )}
 
-        <div className="px-4 bg-white">
-    
-       
-        <div className="overflow-x-auto w-full">
+        <table className="min-w-full border-collaps">
+          <thead className="bg-[#EEF0F6] sticky top-0 z-20 w-full h-[44px] text-sm">
+            <tr>
+              <th className="px-4 min-w-[3rem] text-left">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-purple-500"
+                  checked={paginatedData.every((row) =>
+                    selectedRowIds.includes(row.id)
+                  )}
+                  onChange={handleSelectAllVisible}
+                />
+              </th>
+              <th className="px-4 min-w-[15rem] text-left">Name</th>
+              <th className="px-4 min-w-[8rem] text-left">Email</th>
+              <th className="px-4 min-w-[12rem] text-left">Phone Number</th>
+              <th className="px-4 min-w-[12rem] text-left">Status</th>
+              <th className="px-4 min-w-[6rem] sticky right-0 bg-[#EEF0F6]">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Map your data here */}
 
-          {
-            userFormVisible && <AddUser 
-                                  formData={formData} 
-                                  onClose={closeForm}
-                                  setReload={setReload}
-                                />
-          }
-    
-          <table className="min-w-full border-collaps">
-            <thead className="bg-[#EEF0F6] sticky top-0 z-20 w-full h-[44px] text-sm">
+            {paginatedData.length <= 0 && loading && (
               <tr>
-                <th className="px-4 min-w-[3rem] text-left">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 accent-purple-500" 
-                    checked={paginatedData.every(row => selectedRowIds.includes(row.id))}
-                    onChange={handleSelectAllVisible}
-                  />
-                </th>
-                <th className="px-4 min-w-[15rem] text-left">Name</th>
-                <th className="px-4 min-w-[8rem] text-left">Email</th>
-                <th className="px-4 min-w-[12rem] text-left">Phone Number</th>
-                <th className="px-4 min-w-[12rem] text-left">Status</th>
-                <th className="px-4 min-w-[6rem] sticky right-0 bg-[#EEF0F6]">
-                  Action
-                </th>
+                <td colSpan={5} className="w-full text-center">
+                  Loading...
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {/* Map your data here */}
-    
-              {paginatedData.length <= 0 && loading && (
-                <tr>
-                  <td colSpan={5} className="w-full text-center">Loading...</td>
-                </tr>
-              )}
+            )}
 
-              {paginatedData.length <= 0 && !loading && (
-                <tr>
-                  <td colSpan={5} className="w-full text-center">No user Found</td>
-                </tr>
-              )}
-    
-              {paginatedData.length > 0 &&
-                paginatedData.map((row, index) => (
-                  <tr key={index} className="h-15  border-gray-300">
-                    <td className="px-4">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 accent-purple-500"
-                        checked={selectedRowIds.includes(row.id)}
-                        onChange={() => handleOneCheckbox(row.id)}
-                      />
-                    </td>
-    
-                    {
-                      row.first_name || row.last_name ? (
-                        <td className="px-4 whitespace-nowrap">
-                          {row.first_name} {row.last_name}
-                        </td>
-                      ) : (
-                        <td className="px-4 whitespace-nowrap">
-                          N/A
-                        </td>
-                      )
-                    }
-    
-                    <td className="px-4">{row.email}</td>
-                    <td className="px-4">{row.phone_number}</td>
-                    
-                    <td className="px-4">
-                      {row.status ? (
-                        <span className="inline-flex items-center gap-1 text-[#52C41A] text-sm border-1 p-0.5 px-1 rounded-md">
-                          <FaCheckCircle className="text-md" />
-                          Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-red-500 text-sm border-1 p-0.5 px-1 rounded-md">
-                          <IoIosCloseCircle className="text-lg" />
-                          Inactive
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 sticky right-0 bg-white">
-                      <ActionMenu
-                        row={row}
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
-                        handleStatusToggle={handleStatusToggle}
-                      />
-                    </td>
-                  </tr>
-                ))}
+            {paginatedData.length <= 0 && !loading && (
+              <tr>
+                <td colSpan={5} className="w-full text-center">
+                  No user Found
+                </td>
+              </tr>
+            )}
 
-            </tbody>
-          </table>
-    
-        </div>
-    
-            {/* Pagination OUTSIDE of the scroll container */}
-            <div className="flex justify-center w-full mt-4 mb-8 px-4">
-              <Pagination
-                totalRecords={data.length}
-                currentPage={currentPage}
-                recordsPerPage={recordsPerPage}
-                onPageChange={handlePageChange}
-              />
-            </div>
-    
-        </div>
+            {paginatedData.length > 0 &&
+              paginatedData.map((row, index) => (
+                <tr key={index} className="h-15  border-gray-300">
+                  <td className="px-4">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 accent-purple-500"
+                      checked={selectedRowIds.includes(row.id)}
+                      onChange={() => handleOneCheckbox(row.id)}
+                    />
+                  </td>
+
+                  {row.first_name || row.last_name ? (
+                    <td className="px-4 whitespace-nowrap">
+                      {row.first_name} {row.last_name}
+                    </td>
+                  ) : (
+                    <td className="px-4 whitespace-nowrap">N/A</td>
+                  )}
+
+                  <td className="px-4">{row.email}</td>
+                  <td className="px-4">{row.phone_number}</td>
+
+                  <td className="px-4">
+                    {row.status ? (
+                      <span className="inline-flex items-center gap-1 text-[#52C41A] text-sm border-1 p-0.5 px-1 rounded-md">
+                        <FaCheckCircle className="text-md" />
+                        Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-red-500 text-sm border-1 p-0.5 px-1 rounded-md">
+                        <IoIosCloseCircle className="text-lg" />
+                        Inactive
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-4 sticky right-0 bg-white">
+                    <ActionMenu
+                      row={row}
+                      handleEdit={handleEdit}
+                      handleDelete={handleDelete}
+                      handleStatusToggle={handleStatusToggle}
+                    />
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination OUTSIDE of the scroll container */}
+      <div className="flex justify-center w-full mt-4 mb-8 px-4">
+        <Pagination
+          totalRecords={data.length}
+          currentPage={currentPage}
+          recordsPerPage={recordsPerPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </div>
   );
 }
 

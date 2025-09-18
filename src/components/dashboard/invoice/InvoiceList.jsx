@@ -2,15 +2,25 @@ import React, { useState } from "react";
 import Pagination from "../../../utils/Pagination";
 import usePagination from "../../../utils/usePagination";
 import StatusView from "./utils/StatusView";
+import useFeatureStore from "../../../store/useFeatureStore";
 import InvoiceDetailsModal from "./utils/InvoiceDetailsModal";
 import { useEffect, useRef } from "react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { GoDownload } from "react-icons/go";
 import axios from "../../../utils/axiosInstance";
+import InvoicePdfButton from "./utils/InvoicePdfButton";
 
-function InvoiceList({ data, setShowInvoice, showInvoice, isFilterActive, loading }) {
+function InvoiceList({
+  data,
+  setShowInvoice,
+  showInvoice,
+  isFilterActive,
+  loading,
+}) {
   const tableRef = useRef(null);
   const [invoiceId, setInvoiceId] = useState(null);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const { setSelectedInvoice } = useFeatureStore();
 
   const {
     paginatedData,
@@ -27,54 +37,99 @@ function InvoiceList({ data, setShowInvoice, showInvoice, isFilterActive, loadin
     }
   }, [currentPage]);
 
+
+
+    useEffect(() => {
+      setSelectedInvoice(
+        data.filter((row) => selectedRowIds.includes(row.id))
+      );
+    }, [selectedRowIds, data, setSelectedInvoice]);
+
+
+    const handleOneCheckbox = (idx) => {
+    setSelectedRowIds((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
+
+    const handleSelectAllVisible = (e) => {
+    if (e.target.checked) {
+      setSelectedRowIds(paginatedData.map((row) => row.id));
+    } else {
+      setSelectedRowIds((prevSelected) =>
+        prevSelected.filter((id) => !paginatedData.some((row) => row.id === id))
+      );
+    }
+  };
+
+
+
+
   let handleInvoiceItem = (id) => {
     setInvoiceId(id);
     setShowInvoice(true);
   };
 
-const downloadInvoice = async (invoiceId) => {
-  try {
-    const response = await axios.get(`/api/invoices/${invoiceId}/download`, {
-      withCredentials: true,
-      responseType: 'blob',
-    });
+  const downloadInvoice = async (invoiceId) => {
+    try {
+      const response = await axios.get(`/api/invoices/${invoiceId}/download`, {
+        withCredentials: true,
+        responseType: "blob",
+      });
 
-    const blob = new Blob([response.data], { type: response.headers['content-type'] });
-    const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
 
-    const disposition = response.headers['content-disposition'];
-    let filename = `invoice_${invoiceId}.pdf`;
+      const disposition = response.headers["content-disposition"];
+      let filename = `invoice_${invoiceId}.pdf`;
 
-    if (disposition && disposition.indexOf('filename=') !== -1) {
-      const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
-      if (filenameMatch && filenameMatch.length > 1) {
-        filename = filenameMatch[1];
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+        if (filenameMatch && filenameMatch.length > 1) {
+          filename = filenameMatch[1];
+        }
       }
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download invoice. Please try again.");
     }
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Download error:', error);
-    alert('Failed to download invoice. Please try again.');
-  }
-};
-
+  };
 
   return (
     <>
-      <div
+      {/* <div
         className="px-4 top-[162px] fixed bg-white py-3 flex flex-col w-[calc(100%-329px)] sm:flex-row flex-wrap items-center gap-4 lg:fixed lg:top-[162px] lg:left-[297px] lg:h-[48px] lg:flex lg:items-center lg:space-x-2 lg:whitespace-nowrap z-30"
         style={{
           width: window.innerWidth >= 1024 ? "calc(100% - 297px)" : "100%",
         }}
-      >
+      > */}
+      {/* {showInvoice && (
+          <InvoiceDetailsModal
+            onClose={() => setShowInvoice(false)}
+            invoiceId={invoiceId}
+            downloadInvoice={(id) => downloadInvoice(id)}
+          />
+        )} */}
+
+      {/* Scroll container only for table */}
+      {/* <div
+          className="max-h-[calc(100vh-280px)] overflow-auto border-gray-200 custom-scrollbar"
+          ref={tableRef}
+        > */}
+
+      <div className="px-4 bg-white">
         {showInvoice && (
           <InvoiceDetailsModal
             onClose={() => setShowInvoice(false)}
@@ -83,24 +138,22 @@ const downloadInvoice = async (invoiceId) => {
           />
         )}
 
-        {/* Scroll container only for table */}
-        <div
-          className="max-h-[calc(100vh-280px)] overflow-auto border-gray-200 custom-scrollbar"
-          ref={tableRef}
-        >
-          <table className="min-w-full border-collapse table-auto">
-            <thead className="sticky top-0 bg-gray-100 z-20 w-full h-[44px] ">
+        <div className="overflow-x-auto w-full">
+          <table className="min-w-full border-collaps">
+            <thead className="bg-[#EEF0F6] sticky top-0 z-20 w-full h-[44px] text-sm">
               <tr>
                 <th className="w-12 px-2 py-3 text-center whitespace-nowrap">
                   <input
                     type="checkbox"
                     className="w-4 h-4 accent-purple-500"
+                    checked={paginatedData.every((row) =>
+                    selectedRowIds.includes(row.id)
+                  )}
+                  onChange={handleSelectAllVisible}
                   />
                 </th>
                 <th className="min-w-[260px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
-                  <div className="flex items-center gap-1">
-                    Transaction ID
-                  </div>
+                  <div className="flex items-center gap-1">Transaction ID</div>
                 </th>
                 <th className="min-w-[150px] px-4 py-3 text-left text-xs font-normal text-[#434956] whitespace-nowrap">
                   <div className="flex items-center gap-1">Order Type</div>
@@ -133,13 +186,17 @@ const downloadInvoice = async (invoiceId) => {
             <tbody>
               {loading && !isFilterActive && paginatedData.length <= 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center">Loading...</td>
+                  <td colSpan={5} className="text-center">
+                    Loading...
+                  </td>
                 </tr>
               )}
 
               {!loading && paginatedData.length <= 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center">No Data found</td>
+                  <td colSpan={5} className="text-center">
+                    No Data found
+                  </td>
                 </tr>
               )}
 
@@ -153,6 +210,8 @@ const downloadInvoice = async (invoiceId) => {
                       <input
                         type="checkbox"
                         className="w-4 h-4 accent-purple-500"
+                        checked={selectedRowIds.includes(row.id)}
+                      onChange={() => handleOneCheckbox(row.id)}
                       />
                     </td>
                     <td className="min-w-[260px] px-4 py-3 text-[#101828] font-inter font-medium text-sm leading-5 tracking-normal whitespace-nowrap">
@@ -186,10 +245,16 @@ const downloadInvoice = async (invoiceId) => {
                           className="cursor-pointer hover:text-blue-500"
                           onClick={() => handleInvoiceItem(row.id)}
                         />
-                        <GoDownload
+                        {/* <GoDownload
                           onClick={() => downloadInvoice(row.id)}
                           className="cursor-pointer hover:text-green-500"
-                        />
+                        /> */}
+                        <InvoicePdfButton>
+                          <GoDownload
+                            // onClick={() => downloadInvoice(row.id)}
+                            className="cursor-pointer hover:text-green-500"
+                          />
+                        </InvoicePdfButton>
                       </div>
                     </td>
                   </tr>
@@ -213,4 +278,3 @@ const downloadInvoice = async (invoiceId) => {
 }
 
 export default InvoiceList;
-

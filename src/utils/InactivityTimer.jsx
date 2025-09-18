@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const SESSION_LENGTH = 24 * 60 * 60; // in seconds
-const WARNING_TIME = 23 * 60 * 60 + 45 * 60; // 23:45 in seconds
-// const SESSION_LENGTH = 60; // 1 minute in seconds
-// const WARNING_TIME = SESSION_LENGTH - 15; // 45 seconds (15 seconds before session ends)
+// const SESSION_LENGTH = 24 * 60 * 60; // in seconds
+// const WARNING_TIME = 23 * 60 * 60 + 45 * 60; // 23:45 in seconds
+const SESSION_LENGTH = 60; // 1 minute in seconds
+const WARNING_TIME = SESSION_LENGTH - 15; // 45 seconds (15 seconds before session ends)
 const LOCAL_STORAGE_KEY = "lastActivity";
 
 const InactivityTimer = ({ onLogout }) => {
