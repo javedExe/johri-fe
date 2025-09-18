@@ -1,4 +1,4 @@
-import { PDFDownloadLink } from '@react-pdf/renderer';
+// import { PDFDownloadLink } from '@react-pdf/renderer';
 // import InvoicePDF from './InvoicePDF';
 import InvoicePDF from '../../../../utils/InvoicePDF';
 
@@ -52,17 +52,17 @@ const invoiceData = {
   finalAmount: "36,564.35"
 };
 
-function InvoicePdfButton({ children }) {
-  return (
-    <PDFDownloadLink 
-      document={<InvoicePDF data={invoiceData} />} 
-      fileName={`Invoice-${invoiceData.invoiceNo}.pdf`}
-    >
-      {/* {({ loading }) => loading ? "Generating PDF..." : "Download Invoice PDF"} */}
-        { children }
-    </PDFDownloadLink>
-  );
-}
+// function InvoicePdfButton({ children }) {
+//   return (
+//     <PDFDownloadLink 
+//       document={<InvoicePDF data={invoiceData} />} 
+//       fileName={`Invoice-${invoiceData.invoiceNo}.pdf`}
+//     >
+//       {/* {({ loading }) => loading ? "Generating PDF..." : "Download Invoice PDF"} */}
+//         { children }
+//     </PDFDownloadLink>
+//   );
+// }
 
 
 export default InvoicePdfButton;
