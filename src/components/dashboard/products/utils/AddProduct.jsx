@@ -106,7 +106,7 @@ function AddProduct({ onClose, prevData, isEditMode, setReload }) {
       materials: [],
       description: "",
       availability: "",
-      Quantity: 15,
+      quantity: 15,
       branch: 4,
       images: [],
     },
