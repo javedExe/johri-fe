@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 
 // const SESSION_LENGTH = 24 * 60 * 60; // in seconds
 // const WARNING_TIME = 23 * 60 * 60 + 45 * 60; // 23:45 in seconds
-const SESSION_LENGTH = 30 * 60;      // 30 minutes in seconds
-const WARNING_TIME = 25 * 60;        // 25 minutes in seconds (i.e., 5 minutes before session ends)
+const SESSION_LENGTH = 24 * 60 * 60;        // 24 hours in seconds
+const WARNING_TIME = (23 * 60 + 45) * 60;    // 23 hours 45 minutes in seconds
 const LOCAL_STORAGE_KEY = "lastActivity";
 
 const InactivityTimer = ({ onLogout }) => {
