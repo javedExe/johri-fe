@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import resetPwdBg from "../../../assets/reset-pwd-bg.png";
+// import resetPwdBg from "../../../assets/reset-pwd-bg.png";
+import resetPwdBg2 from "../../../assets/resetPwdBg2.jpg";
 import mobileLogo from "../../../assets/mobile-logo.png";
 import { IoMdLock } from "react-icons/io";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -20,6 +21,8 @@ const ResetPasswordMobile = () => {
 
   const isPasswordMismatch = password && confirmPassword && password !== confirmPassword;
   const isPasswordTooShort = password && password.length < 8;
+  const passwordMatch = password && confirmPassword && password === confirmPassword;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +56,7 @@ const ResetPasswordMobile = () => {
       {/* Top Part */}
       <section
         className="relative flex flex-col justify-between bg-opacity-80 w-full h-[50vh] m-0 text-white px-4 pt-4 bg-cover bg-center brightness-110 bg-gradient-to-b from-black/50 to-black/50"
-        style={{ backgroundImage: `url(${resetPwdBg})` }}
+        style={{ backgroundImage: `url(${resetPwdBg2})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-black/0 z-0 h-[50vh]" />
         <div className="relative z-10 flex flex-col justify-between h-full px-0 pt-4">
@@ -73,7 +76,7 @@ const ResetPasswordMobile = () => {
 
       {/* Password Reset Form */}
       <section className="bg-white bg-opacity-50 h-[50vh] px-4 py-4">
-        <IoMdLock className="bg-purple-200 text-4xl font-bold border-none rounded-full text-purple-700 mb-2 p-2" />
+        <IoMdLock className="bg-[#EFEAFA] text-4xl font-bold border-none rounded-full text-[#7F56D9] mb-2 p-2" />
         <h2 className="text-lg font-medium">Create New Password</h2>
         <h2 className="text-[11px] pb-3 text-gray-500">
           Create a new password and enter it again for confirmation.
@@ -83,7 +86,7 @@ const ResetPasswordMobile = () => {
           <div className="flex flex-col space-y-3">
             {/* Password Field */}
             <div className="relative flex flex-col space-y-1">
-              <label className="mb-1 text-gray-500 font-medium text-[12px]">
+              <label className="mb-1 text-[#425466] font-medium text-[12px]">
                 New Password
               </label>
               <input
@@ -96,7 +99,7 @@ const ResetPasswordMobile = () => {
             
                 className={`border p-1 rounded bg-white outline-none placeholder:text-[11px] placeholder:text-gray-300 ${ isPasswordMismatch
                     ? "border-red-500"
-                    : "border-gray-300"
+                    : passwordMatch? "border-[#34C759]" :"border-gray-300"
                 }`}
               />
               <span
@@ -113,7 +116,7 @@ const ResetPasswordMobile = () => {
 
             {/* Confirm Password Field */}
             <div className="relative flex flex-col space-y-1">
-              <label className="mb-1 text-gray-500 font-medium text-[12px]">
+              <label className="mb-1 text-[#425466] font-medium text-[12px]">
                 Re-enter Password
               </label>
               <input
@@ -125,7 +128,7 @@ const ResetPasswordMobile = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 
                 className={`border p-1 rounded bg-white outline-none placeholder:text-[11px] placeholder:text-gray-300 ${
-                  isPasswordMismatch ? "border-red-500" : "border-gray-300"
+                  isPasswordMismatch ? "border-red-500" : passwordMatch? "border-[#34C759]" :"border-gray-300"
                 }`}
               />
               <span
@@ -149,8 +152,8 @@ const ResetPasswordMobile = () => {
               disabled={loading}
               className={`rounded text-xs p-2 mt-2 w-full cursor-pointer transition-all duration-150 ease-in-out ${
                 loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-black text-white active:scale-98"
+                  ? "bg-[#4b4b92] cursor-not-allowed"
+                  : "bg-[#1C1C3A] text-white active:scale-98"
               }`}
             >
               {loading ? "Resetting..." : "Reset Password"}

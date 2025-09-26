@@ -67,8 +67,8 @@ const LoginMobile = () => {
       <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-black/5 z-0 h-[40vh]" />
 
       {/* Top Part */}
-      <section className="relative bg-opacity-40 w-full h-[40vh] flex flex-col text-white px-4 pt-18 pb-6">
-        <img src={mobileLogo} alt="Johri Logo" className="w-18 h-8 mb-6" />
+      <section className="relative bg-opacity-40 w-full h-[40vh] flex flex-col justify-end text-white px-4 pt-18 pb-6">
+        <img src={mobileLogo} alt="Johri Logo" className="w-22 h-12 mb-6" />
         <h2 className="text-2xl font-medium ">Unlock the World of Johri.</h2>
         <p className="text-white mt-2 text-xs leading-5">
           Join us for personalized picks and shimmering surprises.
@@ -143,10 +143,10 @@ const LoginMobile = () => {
                 Remember me
               </label>
             </div> */}
-            <div>
+            <div className="w-full flex justify-end">
               <Link
                 to="/forgot-password"
-                className="text-xs text-purple-600 hover:underline"
+                className="text-xs text-[#7F56D9] hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -155,7 +155,7 @@ const LoginMobile = () => {
 
           <button
             type="submit"
-            className="bg-black text-white p-2 w-full cursor-pointer disabled:opacity-50"
+            className="bg-[#1C1C3A] text-white p-2 w-full cursor-pointer disabled:opacity-50"
 
             disabled={loading || !formData.username || !formData.password}
           >

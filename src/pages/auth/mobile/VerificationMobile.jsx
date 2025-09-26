@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import verifyOTPbg from "../../../assets/verify-otp-bg.png";
+// import verifyOTPbg from "../../../assets/verify-otp-bg.png";
+import verifyOTPbg2 from "../../../assets/verifyOTPbg2.jpg";
 import mobileLogo from "../../../assets/mobile-logo.png";
 import ProgressIndicator from "../../../utils/ProgressIndicator";
 import { IoMdMail } from "react-icons/io";
@@ -141,7 +142,7 @@ const VerificationMobile = () => {
       {/* Top Part */}
       <section
         className="relative flex flex-col justify-between bg-opacity-40 w-full h-[50vh] m-0 text-white px-4 pt-4 bg-cover bg-center brightness-110"
-        style={{ backgroundImage: `url(${verifyOTPbg})` }}
+        style={{ backgroundImage: `url(${verifyOTPbg2})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 to-black/0 z-0 h-[50vh]" />
         <div className="relative z-10 flex flex-col justify-between h-full px-0 pt-4">
@@ -159,7 +160,7 @@ const VerificationMobile = () => {
 
       {/* Forgot Password form */}
       <section className="bg-white bg-opacity-50 h-[50vh] px-4 py-4 ">
-        <IoMdMail className="bg-purple-200 text-3xl border-none rounded-full text-[#7F56D9] p-2 w-9 h-9" />
+        <IoMdMail className="bg-[#EFEAFA] text-3xl border-none rounded-full text-[#7F56D9] p-2 w-9 h-9" />
         <h2 className="text-xl font-medium">Verification</h2>
         <h2 className="text-xs font-medium pb-2 text-gray-500">
           For added security, please enter the OTP sent to your email address.
@@ -196,7 +197,7 @@ const VerificationMobile = () => {
         <button
           onClick={handleVerifyOTP}
           disabled={isExpired || otp.includes("")}
-          className={`bg-black text-white rounded text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
+          className={`bg-[#1C1C3A] text-white rounded text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
             isExpired || otp.includes("") ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
@@ -206,9 +207,9 @@ const VerificationMobile = () => {
         <button
           type="button"
           onClick={() => navigate("/forgot-password")}
-          className="flex justify-center items-center bg-white border-[1px] border-gray-400 text-sm text-purple-500 rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+          className="flex justify-center items-center bg-white border-[1px] border-[#CCCCCC] text-sm text-[#7F56D9] rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
         >
-          <GoArrowLeft className="pr-3 text-4xl text-purple-500" />
+          <GoArrowLeft className="pr-3 text-4xl text-[#7F56D9]" />
           Back
         </button>
 

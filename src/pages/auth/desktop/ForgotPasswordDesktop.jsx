@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import forgotPwdBg from "../../../assets/forgot-pwd-bg.png";
+// import forgotPwdBg from "../../../assets/forgot-pwd-bg.png";
+import forgotPwdBg2 from "../../../assets/forgotPwdBg2.jpg";
 import desktopLogo from "../../../assets/desktop-logo.png";
 import { useNavigate } from "react-router-dom";
 import { GoArrowLeft } from "react-icons/go";
@@ -40,9 +41,9 @@ const ForgotPasswordDesktop = () => {
     <main className="min-h-screen flex">
       {/* left image panel */}
       <section
-        className="relative min-h-screen w-[50vw] bg-cover bg-center brightness-110"
+        className="relative min-h-screen w-[60vw] bg-cover bg-center brightness-110"
         style={{
-          backgroundImage: `url(${forgotPwdBg})`,
+          backgroundImage: `url(${forgotPwdBg2})`,
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-tl from-black/30 to-black/0 z-0 h-full" />
@@ -58,14 +59,14 @@ const ForgotPasswordDesktop = () => {
       </section>
 
       {/* right panel - login form */}
-      <section className="flex flex-col p-10 w-[50vw] min-h-screen mx-6">
+      <section className="flex flex-col p-10  w-[40vw] min-h-screen mx-6 px-2 lg:px-10 xl:px-20">
         <div className="mb-6">
           {/* logo */}
           <img src={desktopLogo} alt="Johri Desktop Logo" />
         </div>
 
-        <div className="border-[1px] border-purple-200 bg-purple-50 bg-opacity-50  rounded-3xl px-10 pt-20 pb-20 mt-2 justify-center">
-          <RiKeyLine className="bg-purple-100 text-4xl font-bold border-none rounded-full text-purple-700 mb-2 p-2"></RiKeyLine>
+        <div className="min-h-[70vh] border-[1px] border-[#C0ACEC] bg-[#F9F7FD] bg-opacity-50  rounded-3xl px-10 pt-10 pb-20 2xl:pt-20 mt-2 flex-col justify-center">
+          <RiKeyLine className="bg-[#EFEAFA] text-4xl font-bold border-none rounded-full text-[#7F56D9] mb-2 p-2"></RiKeyLine>
           <h2 className="text-4xl font-medium">Forgot Password</h2>
           <h2 className="text-sm pt-1 pb-4 text-gray-500">
             Enter your email address to receive an OTP.
@@ -83,7 +84,7 @@ const ForgotPasswordDesktop = () => {
                 placeholder="johndoe@email.com"
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border border-gray-300 p-2 rounded bg-white active:bg-white outline-none placeholder:text-sm"
+                className="border border-[#D9D9D9] p-2 rounded bg-white active:bg-white outline-none placeholder:text-sm"
               />
               {error?.email && (
                 <span className="text-red-500 text-sm ">{error.email}</span>
@@ -93,7 +94,7 @@ const ForgotPasswordDesktop = () => {
             <button
               type="submit"
               disabled={isSendingOTP}
-              className={`bg-black text-white rounded font-medium text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
+              className={`bg-[#1C1C3A] text-white rounded font-medium text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
                 isSendingOTP
                   ? "opacity-50 cursor-not-allowed"
                   : "active:scale-98"
@@ -105,9 +106,9 @@ const ForgotPasswordDesktop = () => {
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+              className="flex justify-center items-center bg-white border-[1px] border-[#CCCCCC] text-sm text-[#7F56D9] rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
             >
-              <GoArrowLeft className="pr-3 text-4xl text-purple-500"></GoArrowLeft>
+              <GoArrowLeft className="pr-3 text-4xl text-[#7F56D9]"></GoArrowLeft>
               Back
             </button>
           </form>

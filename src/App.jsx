@@ -116,7 +116,6 @@ function App() {
   return (
     <div>
 
-      {/* <InactivityTimer onLogout={handleLogout} /> */}
       {showInactivityTimer && <InactivityTimer onLogout={handleLogout} />}
 
       {/* Admin (Spuer user) Route Start */}

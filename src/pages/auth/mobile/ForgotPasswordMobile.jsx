@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import forgotPwdBg from "../../../assets/forgot-pwd-bg.png";
+// import forgotPwdBg from "../../../assets/forgot-pwd-bg.png";
+import forgotPwdBg2 from "../../../assets/forgotPwdBg2.jpg";
 import mobileLogo from "../../../assets/mobile-logo.png";
 import { GoArrowLeft } from "react-icons/go";
 import { RiKeyLine } from "react-icons/ri";
@@ -37,7 +38,7 @@ const ForgotPasswordMobile = () => {
       {/* Top Part */}
       <section
         className="relative flex flex-col justify-between bg-opacity-40 inset-0 w-full h-[50vh] m-0 text-white px-4 pt-4 bg-cover bg-center brightness-110"
-        style={{ backgroundImage: `url(${forgotPwdBg})` }}
+        style={{ backgroundImage: `url(${forgotPwdBg2})` }}
       >
         {/* Gradient Overlay using custom class */}
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 to-black/0 z-0 h-[50vh]" />
@@ -59,7 +60,7 @@ const ForgotPasswordMobile = () => {
 
       {/* Forgot Password form */}
       <section className="bg-white bg-opacity-50 h-[50vh] px-4 py-4">
-        <RiKeyLine className="bg-purple-200 text-3xl border-none rounded-full text-purple-600  p-2 w-9 h-9"></RiKeyLine>
+        <RiKeyLine className="bg-[#EFEAFA] text-3xl border-none rounded-full text-[#7F56D9]  p-2 w-9 h-9"></RiKeyLine>
         <h2 className="text-xl font-medium">Forgot Password</h2>
         <h2 className="text-xs font-medium pb-4 text-gray-500">
           Enter your email address to receive an OTP.
@@ -77,7 +78,7 @@ const ForgotPasswordMobile = () => {
               placeholder="johndoe@gmail.com"
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="border border-gray-400 p-2 rounded bg-white text-sm outline-none placeholder:text-xs placeholder:text-black items-center"
+              className="border border-[#D9D9D9] p-2 rounded bg-white text-sm outline-none placeholder:text-xs placeholder:text-black items-center"
             />
             {error?.email && (
               <span className="text-red-500 text-sm">{error.email}</span>
@@ -86,7 +87,7 @@ const ForgotPasswordMobile = () => {
 
           <button
             type="submit"
-            className={`bg-black text-white rounded font-medium text-sm p-2 m-0 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
+            className={`bg-[#1C1C3A] text-white rounded font-medium text-sm p-2 m-0 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out ${
               isSendingOTP ? "opacity-50 cursor-not-allowed" : "active:scale-98"
             }`}
           >
@@ -97,9 +98,9 @@ const ForgotPasswordMobile = () => {
             type="button"
             disabled={isSendingOTP}
             onClick={() => navigate("/login")}
-            className="flex justify-center items-center bg-white border-[1px] border-gray-400 text-sm text-purple-500 rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+            className="flex justify-center items-center bg-white border-[1px] border-[#CCCCCC] text-sm text-[#7F56D9] rounded px-2 mt-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
           >
-            <GoArrowLeft className="pr-3 text-4xl text-purple-500"></GoArrowLeft>
+            <GoArrowLeft className="pr-3 text-4xl text-[#7F56D9]"></GoArrowLeft>
             Back
           </button>
         </form>

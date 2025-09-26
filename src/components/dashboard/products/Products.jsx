@@ -16,7 +16,7 @@ const Products = () => {
   const [originalData, setOriginalData] = useState([]);
   const [filteredData, setFilteredData] = useState(originalData);
   const [viewTogel, setViewTogel] = useState(true);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [reload, setReload] = useState(false);
 

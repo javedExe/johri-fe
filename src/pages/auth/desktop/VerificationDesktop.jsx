@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import verifyOTPbg from "../../../assets/verify-otp-bg.png";
+// import verifyOTPbg from "../../../assets/verify-otp-bg.png";
+import verifyOTPbg2 from "../../../assets/verifyOTPbg2.jpg";
 import desktopLogo from "../../../assets/desktop-logo.png";
 import { IoMdMail } from "react-icons/io";
 import { GoArrowLeft } from "react-icons/go";
@@ -144,28 +145,28 @@ const VerificationDesktop = () => {
     <main className="min-h-screen flex">
       {/* left image panel */}
       <section
-        className="relative h-screen w-1/2 bg-cover bg-center brightness-110"
-        style={{ backgroundImage: `url(${verifyOTPbg})` }}
+        className="relative h-screen w-[60vw] bg-cover bg-center brightness-110"
+        style={{ backgroundImage: `url(${verifyOTPbg2})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-tl from-black/20 to-black/0 z-0 h-full" />
-        <div className="relative bg-opacity-40 w-full h-full flex flex-col justify-between m-0 pt-15 pb-5 px-8 text-white">
+        <div className="relative bg-opacity-40 w-full h-full flex flex-col justify-end m-0 pt-15 pb-5 px-8 text-white">
           <h1 className="text-5xl font-garamond mt-40 leading-[1.2] max-w-xl">
             Discover Timeless Craftsmanship.
           </h1>
-          <div className="mb-3">
+          <div className="mb-3 flex justify-start">
             <ProgressIndicator currentStep={2} custom="w-16" />
           </div>
         </div>
       </section>
 
       {/* Right panel */}
-      <section className="flex flex-col p-10 w-1/2 h-screen ml-6 mr-6">
+      <section className="flex flex-col p-10 w-[40vw] h-screen ml-6 mr-6 px-2 lg:px-10 xl:px-20">
         <div className="mb-6">
           <img src={desktopLogo} alt="Johri Desktop Logo" />
         </div>
 
         <div className="border-[1px] border-purple-200 bg-purple-50 bg-opacity-50 rounded-3xl px-10 pt-20 pb-20 mt-2 justify-center">
-          <IoMdMail className="bg-purple-100 text-4xl font-bold border-none rounded-full text-purple-500 mb-2 p-2" />
+          <IoMdMail className="bg-[#EFEAFA] text-4xl font-bold border-none rounded-full text-[#7F56D9] mb-2 p-2" />
           <h2 className="text-4xl font-medium">Verification</h2>
           <p className="text-xs font-medium pt-1 pb-4 text-gray-500">
             For added security, please enter the OTP sent to your email address.
@@ -186,7 +187,7 @@ const VerificationDesktop = () => {
                 aria-label={`OTP Digit ${index + 1}`}
                 onChange={(e) => handleChange(e.target, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-12 h-12 text-center border-[1px] border-gray-300 bg-white rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-10 h-10 2xl:w-12 2xl:h-12 text-center border-[1px] border-gray-300 bg-white rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
             ))}
           </div>
@@ -205,7 +206,7 @@ const VerificationDesktop = () => {
           <button
             onClick={handleVerifyOTP}
             disabled={isExpired || otp.includes("")}
-            className={`bg-black text-white rounded font-medium text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out  ${
+            className={`bg-[#1C1C3A] text-white rounded font-medium text-sm p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out  ${
               isExpired || otp.includes("") ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
@@ -215,9 +216,9 @@ const VerificationDesktop = () => {
           <button
             type="button"
             onClick={() => navigate("/forgot-password")}
-            className="flex justify-center items-center bg-white border-[1px] border-gray-300 text-sm text-purple-500 rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
+            className="flex justify-center items-center bg-white border-[1px] border-[#CCCCCC] text-sm text-[#7F56D9] rounded px-2 mt-3 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out"
           >
-            <GoArrowLeft className="pr-3 text-4xl text-purple-500"></GoArrowLeft>
+            <GoArrowLeft className="pr-3 text-4xl text-[#7F56D9]"></GoArrowLeft>
             Back
           </button>
 

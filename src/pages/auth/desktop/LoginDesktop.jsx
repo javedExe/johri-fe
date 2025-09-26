@@ -3,6 +3,7 @@ import backgroundImage from "../../../assets/background.jpg";
 import desktopLogo from "../../../assets/desktop-logo.png";
 import { FiEye } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
+import { AiOutlineLogin } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/useAuthStore";
@@ -67,7 +68,7 @@ const LoginDesktop = () => {
     <main className="min-h-screen flex">
       {/* left image panel */}
       <section
-        className=" min-h-screen w-1/2 bg-cover bg-center"
+        className=" min-h-screen w-6/10 bg-cover bg-center"
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url(${backgroundImage})`,
         }}
@@ -83,17 +84,22 @@ const LoginDesktop = () => {
       </section>
 
       {/* right panel - login form */}
-      <section className="flex flex-col p-10 w-1/2 min-h-screen ml-6 mr-6">
+      <section className="flex flex-col p-10 w-4/10 min-h-screen ml-6 mr-6  px-2 lg:px-10 xl:px-20">
         <div className="mb-4">
           {/* logo */}
           <img src={desktopLogo} alt="Johri Desktop Logo" />
         </div>
 
-        <div className="border-[1px] border-purple-300 bg-purple-50 bg-opacity-50  rounded-3xl p-10 mt-2 justify-center">
-          <h2 className="text-3xl pb-3 font-medium">Log In</h2>
+        <div className="border-[1px] 2xl:pb-30 2xl:pt-10 border-[#C0ACEC] bg-[#F9F7FD] bg-opacity-50  rounded-3xl p-10 mt-2 justify-center">
+          
+          <div className="w-8 h-8 2xl:w-10 2xl:h-10 bg-[#EFEAFA] rounded-full flex justify-center items-center">
+            <AiOutlineLogin className="w-5 h-5 2xl:w-6 2xl:h-6 text-[#7F56D9]" />
+          </div>
+
+          <h2 className="text-3xl mt-1.5 pb-4 font-medium">Log In</h2>
 
           <form onSubmit={handleLogin}>
-            <div className="flex flex-col space-y-2 mb-2">
+            <div className="flex flex-col space-y-2 mb-4">
               <label className="mb-0 ">E-mail</label>
               <input
                 maxLength={32}
@@ -156,10 +162,10 @@ const LoginDesktop = () => {
                   Remember me
                 </label>
               </div> */}
-              <div>
+              <div className="w-full flex justify-end">
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-purple-600 hover:underline"
+                  className="text-sm text-[#7F56D9] hover:underline"
                 >
                   Forgot Password?
                 </Link>
@@ -169,7 +175,7 @@ const LoginDesktop = () => {
             <button
               type="submit"
               onClick={handleLogin}
-              className="bg-black text-white rounded p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out disabled:opacity-50"
+              className="bg-[#1C1C3A] text-white rounded p-2 w-full cursor-pointer transition-all duration-150 active:scale-98 ease-in-out disabled:opacity-50"
               disabled={loading || !formData.username || !formData.password}
             >
               {loading ? "Loging..." : "Log in"}
