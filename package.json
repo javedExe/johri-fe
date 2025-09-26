@@ -17,7 +17,6 @@
     "formik": "^2.4.6",
     "libphonenumber-js": "^1.12.8",
     "papaparse": "^5.5.3",
-    "@react-pdf/renderer": "^4.3.0",
     "react": "^19.0.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.0.0",
